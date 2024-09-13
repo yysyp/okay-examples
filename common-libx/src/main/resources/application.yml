@@ -1,0 +1,66 @@
+server:
+  port: 10000
+  tomcat:
+    connection-timeout: 5000 # unit is ms
+
+spring:
+  application:
+    name: common-libx
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10GB #Size limit for a single file. The maximum allowed size of a single uploaded file. i.e. 1MB Priority 2, This config also works for limit the upload Maximum size.
+      max-request-size: 100GB #Each request total file size limit. The maximum allowed size of a complete request. i.e. 100KB Priority 1, Limit the multipart/form-data file upload Maximum size.
+
+  datasource:
+    url: jdbc:h2:mem:snd;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    initialization-mode: embedded
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+      settings:
+        web-allow-others: true
+      trace: true
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: ps.demo.commonlibx.entity
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  packages-to-scan: ps.demo.commonlibx
+  show-actuator: false
+  model-and-view-allowed: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  sql:
+    init:
+      encoding: utf-8
+      schema-locations: classpath:dev/schema_h2.sql
+      data-locations: classpath:dev/data_h2.sql
+      mode: always
+
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # Hibernate ddl auto (create, create-drop, validate, update)
+

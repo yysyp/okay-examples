@@ -15,7 +15,10 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-
+        <module>common-libx</module>
+        <module>spring-boot-batch</module>
+        <module>mybatchupload-sprintboot-starter</module>
+        <module>use-springbootstarter</module>
     </modules>
 
     <dependencies>
