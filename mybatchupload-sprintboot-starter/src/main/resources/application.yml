@@ -1,3 +1,4 @@
+
 server:
   port: 10000
   tomcat:
@@ -13,7 +14,9 @@ spring:
       enabled: true
       max-file-size: 10GB #Size limit for a single file. The maximum allowed size of a single uploaded file. i.e. 1MB Priority 2, This config also works for limit the upload Maximum size.
       max-request-size: 100GB #Each request total file size limit. The maximum allowed size of a complete request. i.e. 100KB Priority 1, Limit the multipart/form-data file upload Maximum size.
-
+  batch:
+    job:
+      enabled: false
   datasource:
     url: jdbc:h2:mem:snd;MODE=MYSQL
     username: sa
