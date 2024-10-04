@@ -1,5 +1,6 @@
 package ps.demo.jpademo.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ps.demo.jpademo.dto.BookDto;
@@ -29,11 +30,13 @@ public class BookService {
 
     }
 
+    @Transactional
     public BookDto save(BookDto bookDto) {
         Book book1 = bookRepository.save(BookMapper.INSTANCE.toEntity(bookDto));
         return BookMapper.INSTANCE.toDto(book1);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         bookRepository.deleteById(id);
     }
