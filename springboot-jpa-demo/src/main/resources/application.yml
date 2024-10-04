@@ -33,6 +33,14 @@ springdoc:
   api-docs:
     path: /api-docs
 
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+
 
 ---
 
@@ -56,3 +64,8 @@ spring:
   config:
     activate:
       on-profile: prod
+
+  h2:
+    console:
+      path: /h2-console
+      enabled: false
