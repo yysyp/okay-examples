@@ -22,7 +22,7 @@ public class CopyTool {
         String renderString = jinjava.render(jinTemplate, Map.of("name", "jin"));
         System.out.println("Render string = " + renderString);
 
-        // Project template copy
+        // Project template copy to generate a new project.
         String templateProjectName = "use-springbootstarter";
         String newProjectName = "use-springbootstarter-new";
         String templatePackageName = "ps.demo.usespringbootstarter";
