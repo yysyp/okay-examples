@@ -1,8 +1,8 @@
 # okay-examples
-### Collected examples, may not be perfect but it's okay :D，The important thing is to keep learning new things.
+## Collected examples, it's not perfect but works.
+## Keep learning new things.
 
-- <groupId>ps.oknew</groupId>
-
+### There is a quick copy module project tool: copy-tool/src/main/java/ps/demo/copy/CopyTool.java
 
 http://localhost:10000/
 http://localhost:10000/swagger-ui/index.html
