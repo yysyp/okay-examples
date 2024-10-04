@@ -2,13 +2,16 @@ package ps.demo.copy;
 
 import com.hubspot.jinjava.Jinjava;
 
+import java.io.BufferedReader;
 import java.io.Console;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
+import java.util.Scanner;
 
 public class CopyTool {
 
@@ -23,10 +26,22 @@ public class CopyTool {
         System.out.println("Render string = " + renderString);
 
         // Project template copy to generate a new project.
-        String templateProjectName = "use-springbootstarter";
-        String newProjectName = "use-springbootstarter-new";
-        String templatePackageName = "ps.demo.usespringbootstarter";
-        String newPackageName = "ps.demo.usesnew";
+        String templateProjectName = "springboot-jpa-demo";
+        String templatePackageName = "ps.demo.jpademo";
+        String input = readFromConsole("Please enter new project name and new package name, (eg: default-new-proj ps.demo.newprj) : ");
+        String[] a = input.trim().split("\\s+");
+        if (input.trim().equals("") || a.length != 2) {
+            System.out.println("Aborted");
+            System.exit(0);
+        }
+        String newProjectName = a[0].trim();
+        String newPackageName = a[1].trim();
+
+        System.out.println("\n---------------------------------------------");
+        System.out.println("New Project Name : [" + newProjectName + "]");
+        System.out.println("New Package Name : [" + newPackageName + "]");
+        System.out.println("---------------------------------------------");
+
 
         Path sourcePath = Path.of(templateProjectName);
         Path targetPath = Path.of(newProjectName);
@@ -41,6 +56,16 @@ public class CopyTool {
         System.out.println("Copy files begin...");
         Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath, replacementMap));
         System.out.println("Copy files end.");
+    }
+
+    public static String readFromConsole(String prompt) {
+        System.out.print(prompt);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            return br.readLine();
+        } catch (Exception e) {
+            System.err.println("Reading error: "+e.getMessage());
+        }
+        return "";
     }
 
     public static class CopyFileVisitor extends SimpleFileVisitor<Path> {
