@@ -1,0 +1,56 @@
+i注解继承nheritance
+本文介绍了Java注解的继承性和合并特性。(注解 仅 在 类 Class 上且注解上含有 元注解 @Inherited 时, 才会被继承;)
+注解的继承只发生在被@Inherited标注且在类级别的注解，
+子类不会继承未被@Inherited标注的注解。
+接口不继承任何注解，
+方法上的注解不会被子类继承。
+
+注解的合并主要在Spring中实现，通过@AliasFor实现不同注解的合并。
+
+
+-----------------------------------------------------------------------------------------
+spring注解:
+
+@EnableAutoConfiguration: 扫描它所在的类。
+	不能将同一包下带注解的对象加入到ioc容器中。
+	不能将子包中的注解对象加入到ioc容器中。
+	
+@ComponentScan: 扫描它所在的包以及子包中所有注解的类
+
+@import： 
+	引入普通的类，这个类不需要有任何注解
+	引入标有@Configuration的类中的所有Bean.
+	通过ImportSelector个性化引入想要的类。
+	通过ImportBeanDefinationREgistor引入定义参数的Bean.
+	如果该引入的Bean依赖别的Bean，那么该引入会失败，springboot启动报错无法找到被依赖的Bean.
+	
+可以用一个自定义的Annotation 定义启用 @Import, @ComponentScan etc.
+eg. 
+	@Target({ElementType.TYPE})
+	@Retention(RetentionPolicy.Runtime)
+	@Documented
+	@Import({xxx.class})
+	@ComponentScan(basePackage="xxx")
+	
+	
+	
+-------------------------------------------------------------------------------------------
+Java SPI:
+
+	META-INF/services/com.xxx.InterfaceName
+	and the file content should be the Interface implementation full class name
+	
+	use: java.utils.ServiceLoader.load("com.xxx.InterfaceName")...
+	
+Spring SPI:
+	old:
+		META-INF/spring.factories:
+			org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.xxx.MyAutoConfiguration
+			
+	new:
+		META-INFO/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports:
+		and the file content should be the com.xxx.MyAutoConfiguration
+		
+		
+	
+
