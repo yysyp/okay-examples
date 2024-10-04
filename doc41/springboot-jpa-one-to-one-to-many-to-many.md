@@ -58,7 +58,7 @@ private Long id;
 [juejin.cn-Spring Data JPA Entity之间的关联关系注解如何正确使用.pdf](juejin.cn-Spring%20Data%20JPA%20Entity%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F%3F.pdf)
 
 ** 在JPA协议中也是明确规定：维护关联关系的是拥有外键的一方, 而另一方必须配置mappedBy.
-** 所以一对多映射关系中，多的那一方(从表)就是拥有外键的一方，也就是维护关联关系的一方。而一的那一个方(主表)才需要在字段上配置mappedBy.
+** 所以一对多映射关系中，多的那一方(从表)就是拥有外键的一方，也就是维护关联关系的一方。而一的那一方(主表)才需要在字段上配置mappedBy.
 ** 例如：1个用户 : N个地址
 ```java
 public class Address {
