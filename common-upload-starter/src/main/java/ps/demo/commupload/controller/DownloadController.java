@@ -35,7 +35,7 @@ public class DownloadController {
             , HttpServletRequest request) {
         return getResourceByFile(path, request);
     }
-    
+
 
     private ResponseEntity<Resource> getResourceByFile(String fileName, HttpServletRequest request) {
         // Load file as Resource
