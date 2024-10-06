@@ -14,11 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ps.demo.commupload.dto.BookDto;
+import ps.demo.commupload.dto.UploadMeta;
 import ps.demo.commupload.error.BookNotFoundException;
 import ps.demo.commupload.error.BookUnSupportedFieldPatchException;
 import ps.demo.commupload.error.ClientErrorException;
 import ps.demo.commupload.error.ServiceErrorException;
 import ps.demo.commupload.service.BookService;
+import ps.demo.commupload.service.FileService;
 
 
 import java.io.*;
@@ -34,64 +36,26 @@ import java.util.Map;
 public class UploadController {
 
     @Autowired
-    private BookService bookService;
-
+    private FileService fileService;
 
 
     @Operation(summary = "File upload with multipart form data")
-    @PostMapping(value = "/file", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(value = "/file", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public String uploadFile(@RequestParam("file") MultipartFile file,
-                             @RequestParam(value = "key", required = false) String key,
+    public String uploadFile(@RequestPart("file") MultipartFile file,
+                             UploadMeta uploadMeta,
                              HttpServletRequest req) {
         try {
-            Thread.sleep(31*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (file == null) {
-            throw new ClientErrorException();
-        }
-        try {
-            String fileName = file.getOriginalFilename();
-            if (StringUtils.isEmpty(key)) {
-                key = fileName;
-            }
+            File destFile = fileService.storeMultipartFile(file);
 
-            String uploadFolder = System.getProperty("user.dir") + "/upload-folder/";
-            String destFileName = uploadFolder + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + File.separator
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmssSSS")) + fileName;
-
-            File destFile = Paths.get(destFileName).toFile();
-            log.info("--------->>File uploaded to file={}", destFile);
-            destFile.getParentFile().mkdirs();
-
-            //Use inputStream/outputStream to read write file.
-            try (
-                    BufferedInputStream bi = new BufferedInputStream(file.getInputStream());
-                    OutputStream fout = new FileOutputStream(destFile);
-                    BufferedOutputStream bo = new BufferedOutputStream(fout);
-//                    InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
-//                    BufferedReader br = new BufferedReader(inputStreamReader);
-//                    FileWriter fileWriter = new FileWriter(destFile);
-            ) {
-
-                int len = -1;
-                byte[] buf = new byte[1024];
-                while ((len = bi.read(buf)) != -1) {
-                    bo.write(buf, 0, len);
-                }
-
-            }
-
-            //Or use file transferTo method to transfer file.
-            //file.transferTo(destFile);
+            return destFile.toString();
 
         } catch (Exception e) {
             throw new ServiceErrorException(e);
         }
-        return "SUCCESS";
     }
+
+
 
 
 }
