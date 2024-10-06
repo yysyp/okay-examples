@@ -2,6 +2,7 @@ package ps.demo.commupload.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ public class UploadController {
     @PostMapping(value = "/file", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
     public UploadMetaDto uploadFile(@RequestPart("file") MultipartFile file,
-                             UploadMetaDto uploadMetaDto,
+                                    @Valid UploadMetaDto uploadMetaDto,
                              HttpServletRequest req) {
         try {
             File destFile = fileService.storeMultipartFile(file);
