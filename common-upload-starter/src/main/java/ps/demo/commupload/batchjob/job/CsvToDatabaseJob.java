@@ -1,6 +1,7 @@
 package ps.demo.commupload.batchjob.job;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -21,6 +22,7 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,10 +37,9 @@ import ps.demo.commupload.batchjob.tasklets.DeleteInputCsvTasklet;
 
 import javax.sql.DataSource;
 
+@Slf4j
 @Configuration
 public class CsvToDatabaseJob {
-
-  public static final Logger logger = LoggerFactory.getLogger(CsvToDatabaseJob.class);
 
   private static final String INSERT_QUERY = """
       insert into person (first_name, last_name, age, active)
@@ -54,9 +55,9 @@ public class CsvToDatabaseJob {
 //  private Resource inputFeed;
 
   @Bean(name="insertIntoDbFromCsvJob")
-  public Job insertIntoDbFromCsvJob(Step step1, Step step2) {
+  public Job insertIntoDbFromCsvJob(@Qualifier("step1") Step step1, Step step2) {
 
-    var name = "Persons Import Job";
+    var name = "Persons Csv Import Job";
     var builder = new JobBuilder(name, jobRepository);
 
     return builder.start(step1)
@@ -66,7 +67,7 @@ public class CsvToDatabaseJob {
   }
 
   @Bean
-  public Step step1(ItemReader<Person> reader,
+  public Step step1(@Qualifier("csvFileReader") ItemReader<Person> reader,
                     ItemWriter<Person> writer,
                     ItemProcessor<Person, Person> processor,
                     PlatformTransactionManager txManager) {

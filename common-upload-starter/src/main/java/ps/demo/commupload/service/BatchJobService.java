@@ -24,7 +24,14 @@ public class BatchJobService {
     }
 
     public void startBatchJob(UploadMetaDto uploadMetaDto) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException, InterruptedException {
-        Job job = (Job) applicationContext.getBean("insertIntoDbFromCsvJob");
+
+        Job job = null;
+
+        if (uploadMetaDto.getFileType().toUpperCase().endsWith(".CSV")) {
+            job = (Job) applicationContext.getBean("insertIntoDbFromCsvJob");
+        } else {
+            job = (Job) applicationContext.getBean("insertIntoDbFromExcelJob");
+        }
 
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
