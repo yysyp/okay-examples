@@ -1,0 +1,77 @@
+server:
+  port: 10001
+  tomcat:
+    connection-timeout: 5000 # unit is ms
+
+logging:
+  level:
+    root: ERROR
+    org.springframework: INFO
+    ps.demo: DEBUG
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr(${LOGGED_APPLICATION_NAME:-}[%15.15t]){faint} %clr(${LOG_CORRELATION_PATTERN:-}){faint}%clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}
+
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100GB #Size limit for a single file. The maximum allowed size of a single uploaded file. i.e. 1MB Priority 2, This config also works for limit the upload Maximum size.
+      max-request-size: 1000GB #Each request total file size limit. The maximum allowed size of a complete request. i.e. 100KB Priority 1, Limit the multipart/form-data file upload Maximum size.
+
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+      poolName: HikariPoolOK
+
+    url: jdbc:h2:mem:snd;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    initialization-mode: embedded
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+springdoc:
+  api-docs:
+    path: /api-docs
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: sit
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: uat
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  h2:
+    console:
+      path: /h2-console
+      enabled: false
