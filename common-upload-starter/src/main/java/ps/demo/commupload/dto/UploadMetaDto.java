@@ -9,7 +9,7 @@ import java.util.Map;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class UploadMeta implements java.io.Serializable {
+public class UploadMetaDto implements java.io.Serializable {
 
     private String fileType;
 

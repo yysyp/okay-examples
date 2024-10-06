@@ -3,16 +3,17 @@ package ps.demo.commupload.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ps.demo.commupload.entity.Book;
+import ps.demo.commupload.entity.UploadMeta;
+
 
 import java.time.LocalDate;
 import java.util.List;
 
 // Spring Data JPA creates CRUD implementation at runtime automatically.
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface UploadMetaRepository extends JpaRepository<UploadMeta, Long> {
 
     // Custom Query
-    @Query("SELECT b FROM Book b WHERE b.publishDate > :date")
-    List<Book> findByPublishedDateAfter(@Param("date") LocalDate date);
+    @Query("SELECT m FROM UploadMeta m WHERE m.uploadedDate > :date")
+    List<UploadMeta> findByUploadedDateAfter(@Param("date") LocalDate date);
 
 }
