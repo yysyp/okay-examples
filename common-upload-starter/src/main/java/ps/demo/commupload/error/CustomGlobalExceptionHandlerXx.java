@@ -2,6 +2,7 @@ package ps.demo.commupload.error;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,8 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Order(value = Integer.MAX_VALUE) //Maximum value means lowest order
 @ControllerAdvice
-public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomGlobalExceptionHandlerXx extends ResponseEntityExceptionHandler {
 
     // Let Spring handle the exception, we just override the status code
     @ExceptionHandler(BookNotFoundException.class)

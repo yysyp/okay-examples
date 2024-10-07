@@ -1,4 +1,4 @@
-package ps.demo.commupload.config;
+package ps.demo.starteruse.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
-@Configuration("commonThreadPool")
+@Configuration
 public class ThreadPoolConfig {
 
 
@@ -31,7 +31,7 @@ public class ThreadPoolConfig {
      * @return the configured ThreadPoolTaskExecutor
      */
     @Bean(name = "taskExecutor")
-    @ConditionalOnMissingBean(ThreadPoolTaskExecutor.class)
+    @ConditionalOnMissingBean
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         log.info("Initializing ThreadPoolTaskExecutor with corePoolSize={}, maxPoolSize={}, queueCapacity={}",
                 corePoolSize, maxPoolSize, queueCapacity);

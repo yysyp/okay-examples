@@ -28,6 +28,7 @@ public class CommonConfig {
 
 
     @Bean
+    @ConditionalOnMissingBean(DataSourceInitializer.class)
     public DataSourceInitializer databasePopulator(DataSource dataSource) {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("org/springframework/batch/core/schema-h2.sql"));

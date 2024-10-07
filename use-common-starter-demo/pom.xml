@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ps.demo</groupId>
-    <artifactId>common-upload-starter</artifactId>
+    <artifactId>use-common-starter-demo</artifactId>
     <packaging>jar</packaging>
-    <name>common-upload-starter</name>
+    <name>use-common-starter-demo</name>
     <url>http://localhost:10001/</url>
     <version>1.0.0</version>
 
@@ -24,7 +24,6 @@
         <downloadSources>true</downloadSources>
         <downloadJavadocs>true</downloadJavadocs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <poi.version>5.2.5</poi.version>
     </properties>
 
     <dependencies>
@@ -33,6 +32,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>ps.demo</groupId>
+            <artifactId>common-upload-starter</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- spring mvc, rest -->
@@ -79,40 +84,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.11.0</version>
-        </dependency>
-
-        <!-- springbatch -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-batch</artifactId>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.batch.extensions/spring-batch-excel -->
-        <dependency>
-            <groupId>org.springframework.batch.extensions</groupId>
-            <artifactId>spring-batch-excel</artifactId>
-            <version>0.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
-<!--            <optional>true</optional>-->
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
-<!--            <optional>true</optional>-->
-        </dependency>
-
-
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -131,10 +102,10 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
