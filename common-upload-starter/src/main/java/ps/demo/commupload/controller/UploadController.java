@@ -5,11 +5,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ps.demo.commupload.dto.UploadMetaDto;
 import ps.demo.commupload.error.ServiceErrorException;
+import ps.demo.commupload.listener.FileParseService;
 import ps.demo.commupload.service.BatchJobService;
 import ps.demo.commupload.service.FileService;
 import ps.demo.commupload.service.UploadMetaService;
@@ -31,6 +33,9 @@ public class UploadController {
     @Autowired
     private BatchJobService batchJobService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
 
 
     @Operation(summary = "File upload with multipart form data")
@@ -44,6 +49,12 @@ public class UploadController {
             uploadMetaDto.getExtraParams().put("destFile", destFile.getCanonicalFile().getPath());
             UploadMetaDto result = uploadMetaService.save(uploadMetaDto);
             batchJobService.startBatchJob(result);
+
+            if (applicationContext.getBeanNamesForType(FileParseService.class).length > 0) {
+                log.info("calling listener");
+                FileParseService fileParseService = applicationContext.getBean(FileParseService.class);
+                fileParseService.parseFile(result);
+            }
 
             return result;
 
