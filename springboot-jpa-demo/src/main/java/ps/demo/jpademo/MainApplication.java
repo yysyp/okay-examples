@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import ps.demo.jpademo.entity.Book;
@@ -15,6 +16,7 @@ import ps.demo.jpademo.service.RoleService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +31,15 @@ public class MainApplication {
     // Spring runs CommandLineRunner bean when Spring Boot App starts
     @Profile("dev")
     @Bean
-    public CommandLineRunner demo(BookRepository bookRepository, RoleRepository roleRepository, RoleService roleService) {
+    public CommandLineRunner demo(ApplicationContext ctx, BookRepository bookRepository, RoleRepository roleRepository, RoleService roleService) {
         return (args) -> {
+
+            String[] beanNames = ctx.getBeanDefinitionNames();
+            Arrays.sort(beanNames);
+            int i = 1;
+            for (String beanName : beanNames) {
+                log.info("Bean [] name: {}", i++, beanName);
+            }
 
             bookRepository.save(new Book("A Guide to the Bodhisattva Way of Life", "Santideva", new BigDecimal("15.41"), LocalDate.of(2023, 8, 31)));
             bookRepository.save(new Book("The Life-Changing Magic of Tidying Up", "Marie Kondo", new BigDecimal("9.69"), LocalDate.of(2023, 7, 31)));

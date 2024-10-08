@@ -1,5 +1,7 @@
 package ps.demo.jpademo.controller;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +15,7 @@ import ps.demo.jpademo.dto.BookDto;
 import ps.demo.jpademo.error.BookNotFoundException;
 import ps.demo.jpademo.error.BookUnSupportedFieldPatchException;
 import ps.demo.jpademo.service.BookService;
+import io.micrometer.core.instrument.Counter;
 
 
 import java.util.List;
@@ -22,13 +25,28 @@ import java.util.Map;
 @RequestMapping("/api/books")
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final Counter counter;
+
+    private final Timer durationTimer;
+
+    private final MeterRegistry meterRegistry;
+
+    private final BookService bookService;
+
+    public BookController(MeterRegistry meterRegistry, BookService bookService) {
+
+        this.meterRegistry = meterRegistry;
+        this.bookService = bookService;
+
+        counter = meterRegistry.counter("book.findAll.count");
+        durationTimer = meterRegistry.timer("book.add,duration");
+    }
 
 
     // Find
     @GetMapping("/")
     List<BookDto> findAll() {
+        counter.increment();
         return bookService.findAll();
     }
 
@@ -59,8 +77,8 @@ public class BookController {
     // Save or update
     @PutMapping("/{id}")
     BookDto saveOrUpdate(@RequestBody BookDto newBookDto, @PathVariable Long id) {
-
-        return bookService.findById(id)
+        Timer.Sample sample = Timer.start(meterRegistry);
+        BookDto result = bookService.findById(id)
                 .map(x -> {
                     x.setName(newBookDto.getName());
                     x.setAuthor(newBookDto.getAuthor());
@@ -71,6 +89,9 @@ public class BookController {
                     newBookDto.setId(id);
                     return bookService.save(newBookDto);
                 });
+
+        sample.stop(durationTimer);
+        return result;
     }
 
     // update author only
