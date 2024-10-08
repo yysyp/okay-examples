@@ -4,14 +4,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Book {
 
@@ -24,8 +27,6 @@ public class Book {
     private LocalDate publishDate;
 
     // for JPA only, no use
-    public Book() {
-    }
 
     public Book(String name, String author, BigDecimal price, LocalDate publishDate) {
         this.name = name;
@@ -34,15 +35,5 @@ public class Book {
         this.publishDate = publishDate;
     }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", author='" + author + '\'' +
-                ", price=" + price +
-                ", publishDate=" + publishDate +
-                '}';
-    }
 
 }
