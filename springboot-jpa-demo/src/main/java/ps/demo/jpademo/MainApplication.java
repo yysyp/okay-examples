@@ -10,6 +10,7 @@ import ps.demo.jpademo.entity.Book;
 import ps.demo.jpademo.entity.Role;
 import ps.demo.jpademo.repository.BookRepository;
 import ps.demo.jpademo.repository.RoleRepository;
+import ps.demo.jpademo.service.RoleService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,7 +29,7 @@ public class MainApplication {
     // Spring runs CommandLineRunner bean when Spring Boot App starts
     @Profile("dev")
     @Bean
-    public CommandLineRunner demo(BookRepository bookRepository, RoleRepository roleRepository) {
+    public CommandLineRunner demo(BookRepository bookRepository, RoleRepository roleRepository, RoleService roleService) {
         return (args) -> {
 
             bookRepository.save(new Book("A Guide to the Bodhisattva Way of Life", "Santideva", new BigDecimal("15.41"), LocalDate.of(2023, 8, 31)));
@@ -74,6 +75,10 @@ public class MainApplication {
             list2.forEach((e) -> {
                 log.info("role: {}", e);
             });
+
+            //list2.get(0).setRoleName("haha test~");
+            roleService.testAutoSaveModification();
+            roleService.testNotAutoSaveModification(list2.get(0));
 
         };
     }
