@@ -5,12 +5,11 @@
 - Make sure you mvn rebuild the latest jar!!!
 - Please set NEXUS_USER & NEXUS_PASS if you'd like to connect to NEXUS.
 - Go to folder: deployment-scripts/docker/ and open "Git bash here".
-- ./runWithDocker.sh
+- ./runWithDocker.sh to deploy jar to docker.
 - Input Nexus password if any
 - Command to stop instance: docker stop xxxxx
-
 ---
-#### Visit Application:
+- Visit Application via:
 URLs:
 - http://localhost:10001/api-docs
 - http://localhost:10001/swagger-ui/index.html
@@ -27,3 +26,28 @@ H2 DataBase:
 
 ---
 #### Run with kubernetes:
+- Make sure you mvn rebuild the latest jar!!!
+- Please set NEXUS_USER & NEXUS_PASS if you'd like to connect to NEXUS.
+- docker push xxx.com/path/repo/springboot-jpa-demo
+- If no NEXUS repo, comment out "docker push xxx.com/path/repo/springboot-jpa-demo" in dockerBuildPushAndGenDeployYaml.sh
+- If no NEXUS repo, fix the: "xxx.com/path/repo/springboot-jpa-demo:THE_APP_VERSION" in deploy-template.yaml
+- ./onclickDeployK8s.sh to deploy jar to kubernetes.
+- Command to remove the deployment: kubectl delete namespace app
+- OR: kubectl delete -f deploy.yaml
+--- 
+- Visit Application via:
+  URLs:
+- http://localhost:30001/api-docs
+- http://localhost:30001/swagger-ui/index.html
+- http://localhost:30001/api/books/
+- http://localhost:30001/actuator
+-
+H2 DataBase:
+- http://localhost:30001/h2-console
+<pre>
+    Driver Class: org.h2.Driver
+    JDBC URL:     jdbc:h2:mem:springboot-jpa-demo;MODE=MYSQL
+    User Name:    sa
+</pre>
+
+---
