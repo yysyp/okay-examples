@@ -1,4 +1,14 @@
 ### There is a simple CRUD example using JPA: springboot-jpa-demo
+
+---
+#### Run with docker:
+- Git bash here
+- cd deployment-scripts/docker/
+- ./runWithDocker.sh
+- input Nexus password if any
+- 
+---
+
 URLs:
 - http://localhost:10001/api-docs
 - http://localhost:10001/swagger-ui/index.html

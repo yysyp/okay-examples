@@ -11,18 +11,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 public class CopyTool {
 
 
     public static void main(String[] args) throws IOException {
+
         // Try jinjava
         String jinTemplate = """
                 Hello {{name}}
                 """;
         Jinjava jinjava = new Jinjava();
-        String renderString = jinjava.render(jinTemplate, Map.of("name", "jin"));
+        String renderString = jinjava.render(jinTemplate, Map.of("name", "Patrick"));
         System.out.println("Render string = " + renderString);
 
         // Project template copy to generate a new project.
@@ -50,6 +52,7 @@ public class CopyTool {
                 templatePackageName, newPackageName,
                 templatePackageName.replace(".", "\\"), newPackageName.replace(".", "\\"));
 
+        replacementMap.put("0001", 2 + new Random().nextInt(9999 - 2) + "");
         if (!Files.exists(targetPath)) {
             Files.createDirectories(targetPath);
         }
