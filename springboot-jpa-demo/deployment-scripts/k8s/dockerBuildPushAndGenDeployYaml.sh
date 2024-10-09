@@ -5,7 +5,7 @@ set -eu
 appversion=$(date +"%Y%m%d-%H%M%S")
 CURDIR=$(pwd)
 
-cd ..
+cd ../../
 echo "Make sure you mvn rebuild the latest jar!!!"
 docker build -t springboot-jpa-demo:${appversion} -f Dockerfile .
 #gcloud auth configure-docker xxx.com
@@ -14,6 +14,6 @@ docker tag springboot-jpa-demo:${appversion} xxx.com/path/repo/springboot-jpa-de
 #docker push xxx.com/path/repo/springboot-jpa-demo:${appversion}
 
 cd "${CURDIR}"
-cp deploy-template.yaml deploy.yaml
+cp -f deploy-template.yaml deploy.yaml
 sed -i "s/THE_APP_VERSION/${appversion}/g" deploy.yaml
 

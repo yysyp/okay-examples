@@ -1,3 +1,6 @@
+# No need open VPN
+
+# Setting -> Docker Engine:
 {
   "builder": {
     "gc": {
@@ -5,21 +8,30 @@
       "enabled": true
     }
   },
+  "experimental": false,
   "registry-mirrors": [
+    "https://docker.211678.top",
+    "https://docker.1panel.live",
+    "https://hub.rat.dev",
+    "https://docker.m.daocloud.io",
+    "https://do.nark.eu.org",
+    "https://dockerpull.com",
+    "https://dockerproxy.cn",
+    "https://docker.awsl9527.cn",
     "https://hub-mirror.c.163.com",
     "https://registry.cn-hangzhou.aliyuncs.com",
     "https://mirror.ccs.tencentyun.com",
     "https://registry.docker-cn.com",
     "https://docker.mirrors.ustc.edu.cn"
-  ],
-  "experimental": false
+  ]
 }
 
 
-
+#
 "windows docker desktop 4.28.0 no such host" solution:
-
 C:\Windows\System32\drivers\etc\hosts to add:
+8.8.8.8 registry-1.docker.io
+OR
 114.114.114.114 registry-1.docker.io
 
 

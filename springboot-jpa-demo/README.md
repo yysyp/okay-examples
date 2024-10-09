@@ -31,9 +31,15 @@ H2 DataBase:
 - docker push xxx.com/path/repo/springboot-jpa-demo
 - If no NEXUS repo, comment out "docker push xxx.com/path/repo/springboot-jpa-demo" in dockerBuildPushAndGenDeployYaml.sh
 - If no NEXUS repo, fix the: "xxx.com/path/repo/springboot-jpa-demo:THE_APP_VERSION" in deploy-template.yaml
-- ./onclickDeployK8s.sh to deploy jar to kubernetes.
+- ./buildYamlAndDeploy2k8sCluster.sh to deploy jar to kubernetes.
+- Command to view deployment in k8s: kubectl -n app get all
 - Command to remove the deployment: kubectl delete namespace app
 - OR: kubectl delete -f deploy.yaml
+- Check event: kubectl -n app get event
+- Check log: kubectl -n app logs -f ngx-5d7556ffd-d7jwt -c 1st
+- OR: kubectl -n app logs -f $(kubectl -n app get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springboot-jpa-demo | head -1)
+- Check container: kubectl -n namespace1 -it exec podxxx -- bash 
+- OR: kubectl -n app -it exec ngx-65f68876c8-ksc74  -c 1st -- /bin/sh
 --- 
 - Visit Application via:
   URLs:
