@@ -30,6 +30,13 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+      settings:
+        web-allow-others: true
+      trace: true
 
 springdoc:
   api-docs:

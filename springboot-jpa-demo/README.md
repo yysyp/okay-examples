@@ -2,13 +2,15 @@
 
 ---
 #### Run with docker:
-- Git bash here
-- cd deployment-scripts/docker/
+- Make sure you mvn rebuild the latest jar!!!
+- Please set NEXUS_USER & NEXUS_PASS if you'd like to connect to NEXUS.
+- Go to folder: deployment-scripts/docker/ and open "Git bash here".
 - ./runWithDocker.sh
-- input Nexus password if any
-- 
----
+- Input Nexus password if any
+- Command to stop instance: docker stop xxxxx
 
+---
+#### Visit Application:
 URLs:
 - http://localhost:10001/api-docs
 - http://localhost:10001/swagger-ui/index.html
@@ -23,3 +25,5 @@ H2 DataBase:
     User Name:    sa
 </pre>
 
+---
+#### Run with kubernetes:
