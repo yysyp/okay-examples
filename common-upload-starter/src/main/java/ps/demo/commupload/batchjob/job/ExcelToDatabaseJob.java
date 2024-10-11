@@ -25,6 +25,7 @@ import ps.demo.commupload.batchjob.listener.JobCompletionNotificationListener;
 import ps.demo.commupload.batchjob.listener.PersonItemReadListener;
 import ps.demo.commupload.batchjob.model.Person;
 import ps.demo.commupload.batchjob.processor.PersonItemProcessor;
+import ps.demo.commupload.batchjob.reader.MyPoiItemReader;
 import ps.demo.commupload.excel.PersonRowMapper;
 
 import javax.sql.DataSource;
@@ -77,14 +78,17 @@ public class ExcelToDatabaseJob {
 
     @Bean(name = "excelFileReader")
     @StepScope
-    public PoiItemReader<Person> excelFileReader(@Value("#{jobParameters['tempFile']}") String tempFilePath) {
-        PoiItemReader<Person> reader = new PoiItemReader<>();
+    public MyPoiItemReader<Person> excelFileReader(@Value("#{jobParameters['tempFile']}") String tempFilePath) {
+        MyPoiItemReader<Person> reader = new MyPoiItemReader<>();
         reader.setResource(new FileSystemResource(tempFilePath)); // Path to your Excel file
-        reader.setLinesToSkip(1); // Skip header row if present
+        reader.setLinesToSkip(2); // Skip header row if present
 //        BeanWrapperRowMapper<Person> beanWrapperRowMapper = new BeanWrapperRowMapper();
 //        beanWrapperRowMapper.setTargetType(Person.class);
 //        reader.setRowMapper(beanWrapperRowMapper); // Map Excel rows to User objects
-        reader.setRowMapper(new PersonRowMapper());
+        PersonRowMapper personRowMapper = new PersonRowMapper();
+        personRowMapper.headerRowSets = reader.headerRowSets;
+        personRowMapper.sheetNames = reader.sheetNames;
+        reader.setRowMapper(personRowMapper);
         return reader;
     }
 
