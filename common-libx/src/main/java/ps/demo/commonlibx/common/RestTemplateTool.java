@@ -14,9 +14,7 @@ import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.ssl.TrustStrategy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
@@ -72,13 +70,15 @@ public class RestTemplateTool {
         requestFactory.setHttpClient(httpClient);
         requestFactory.setConnectionRequestTimeout(5000);
         requestFactory.setConnectTimeout(10000);
-        RestTemplate restTemplate = initRestTemplate(requestFactory);
+        RestTemplate restTemplate = initRestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
+
         setCharset(restTemplate);
         return restTemplate;
     }
 
-    private RestTemplate initRestTemplate(HttpComponentsClientHttpRequestFactory requestFactory) {
+    private RestTemplate initRestTemplate(BufferingClientHttpRequestFactory requestFactory) {
         RestTemplate restTemplate = new RestTemplate(requestFactory); //getRequestFactory());
+
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         interceptors.add(new LoggingRequestInterceptor());
         restTemplate.setInterceptors(interceptors);

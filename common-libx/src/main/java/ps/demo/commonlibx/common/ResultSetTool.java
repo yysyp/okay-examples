@@ -22,7 +22,7 @@ public class ResultSetTool {
         while (resultSet.next()) {
             Object obj = constructGson();
             for (int i = 0; i < totalCol; i++) {
-                JsonTool2.setField(obj, resultSet.getMetaData().getColumnLabel(i + 1)
+                JsonToolX.setField(obj, resultSet.getMetaData().getColumnLabel(i + 1)
                 , processObjectVal(resultSet.getObject(i + 1)));
             }
             list.add(obj);

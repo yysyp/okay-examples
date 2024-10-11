@@ -13,9 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class JsonTool2 {
+public class JsonToolX {
 
-    private JsonTool2() {}
+    private JsonToolX() {}
 
     private enum JsonOper {
         GET,

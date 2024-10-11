@@ -4,13 +4,13 @@ kind: Namespace
 metadata:
   name: app
   labels:
-    namespace: app
+    namespace: nsapp
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: springboot-jpa-demo
-  namespace: app
+  namespace: nsapp
 spec:
   replicas: 1
   selector:
@@ -61,7 +61,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: springboot-jpa-demo-service
-  namespace: app
+  namespace: nsapp
   labels:
     app: springboot-jpa-demo
 spec:
@@ -78,7 +78,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: springboot-jpa-demo-key
-  namespace: app
+  namespace: nsapp
 type: Opaque
 data:
   appid: QVBQMTIzNA==
