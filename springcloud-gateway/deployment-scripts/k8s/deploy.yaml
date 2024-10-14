@@ -9,40 +9,40 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: springboot-jpa-demo
+  name: springcloud-gateway
   namespace: nsapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: springboot-jpa-demo
+      app: springcloud-gateway
   template:
     metadata:
       labels:
-        app: springboot-jpa-demo
+        app: springcloud-gateway
     spec:
       containers:
-        - name: springboot-jpa-demo
-#          image: "xxx.com/path/repo/springboot-jpa-demo:20241014-190525"
-          image: "springboot-jpa-demo:20241014-190525"
+        - name: springcloud-gateway
+#          image: "xxx.com/path/repo/springcloud-gateway:20241014-185738"
+          image: "springcloud-gateway:20241014-185738"
           ports:
-            - containerPort: 10001
+            - containerPort: 10000
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 10001
+              port: 10000
             initialDelaySeconds: 120
             periodSeconds: 30
           env:
             - name: APPID
               valueFrom:
                 secretKeyRef:
-                  name: springboot-jpa-demo-key
+                  name: springcloud-gateway-key
                   key: appid
             - name: APPSECRET
               valueFrom:
                 secretKeyRef:
-                  name: springboot-jpa-demo-key
+                  name: springcloud-gateway-key
                   key: appsecret
           volumeMounts:
             - name: myvolume
@@ -51,7 +51,7 @@ spec:
       volumes:
         - name: myvolume
           secret:
-            secretName: springboot-jpa-demo-key
+            secretName: springcloud-gateway-key
 #            items:
 #              - key: key.pem
 #                path: key.pem
@@ -60,24 +60,24 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-jpa-demo-service
+  name: springcloud-gateway-service
   namespace: nsapp
   labels:
-    app: springboot-jpa-demo
+    app: springcloud-gateway
 spec:
   ports:
-    - port: 10001 # between containers for service call for K8s
-      targetPort: 10001 # container port
-      nodePort: 30001 # by default >30000 for external call
+    - port: 10000 # between containers for service call for K8s
+      targetPort: 10000 # container port
+      nodePort: 30000 # by default >30000 for external call
   type: NodePort
   selector:
-    app: springboot-jpa-demo
+    app: springcloud-gateway
 
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: springboot-jpa-demo-key
+  name: springcloud-gateway-key
   namespace: nsapp
 type: Opaque
 data:

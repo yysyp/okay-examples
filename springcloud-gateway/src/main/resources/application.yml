@@ -38,17 +38,24 @@ spring:
         -   id: jpa-demo_service_route
             predicates:
               - Path=/jpademo/**
-            uri: http://localhost:10001
+            uri: http://localhost:10000
             filters:
               - StripPrefix=1
             method: GET
-            #http://localhost:10000/jpademo/api/books/ --> http://localhost:10001/api/books/
+            #http://localhost:10000/jpademo/api/books/ --> http://localhost:10000/api/books/
         -   id: h2_console
             predicates:
               - Path=/h2-console/**
             uri: http://localhost:10000/h2-console
             method: GET
-
+        -   id: springboot-jpa-demo-service_k8s
+            predicates:
+              - Path=/k8sjpademo/**
+            uri: http://springcloud-gateway-service.nsapp.svc.cluster.local:10001
+            filters:
+              - StripPrefix=1
+            method: GET
+            #http://localhost:30000/k8sjpademo/api/books/
 
 springdoc:
   api-docs:
