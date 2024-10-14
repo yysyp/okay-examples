@@ -15,8 +15,8 @@ This command will make a GET request to the book-service to retrieve a list of b
 
 ---
 
-kubectl -n nsapp -it exec $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springcloud-gateway | head -1) -- bash
-http://springcloud-gateway-service.nsapp.svc.cluster.local:10000/api/books/
+kubectl -n nsapp -it exec $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springcloud-gateway | head -1) -- bash -c "curl http://springboot-jpa-demo-service.nsapp.svc.cluster.local:10001/api/books/"
+
 
 
 kubectl -n nsapp logs -f $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springcloud-gateway | head -1)

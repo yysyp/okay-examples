@@ -23,8 +23,8 @@ spec:
     spec:
       containers:
         - name: springboot-jpa-demo
-#          image: "xxx.com/path/repo/springboot-jpa-demo:20241014-190525"
-          image: "springboot-jpa-demo:20241014-190525"
+#          image: "xxx.com/path/repo/springboot-jpa-demo:20241014-195213"
+          image: "springboot-jpa-demo:20241014-195213"
           ports:
             - containerPort: 10001
           livenessProbe:

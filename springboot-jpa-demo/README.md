@@ -38,7 +38,7 @@ H2 DataBase:
 - Check event: kubectl -n nsapp get event
 - Check log: kubectl -n nsapp logs -f ngx-5d7556ffd-d7jwt -c 1st
 - OR: kubectl -n nsapp logs -f $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springboot-jpa-demo | head -1)
-- OR: kubectl -n nsapp -it exec $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springboot-jpa-demo | head -1) -- bash
+- OR: kubectl -n nsapp -it exec $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springboot-jpa-demo | head -1) -- bash -c "ls"
 - Check container: kubectl -n nsapp -it exec podxxx -- bash 
 - OR: kubectl -n nsapp -it exec ngx-65f68876c8-ksc74  -c 1st -- /bin/sh
 --- 

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -21,6 +22,7 @@ import io.micrometer.core.instrument.Counter;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -47,6 +49,7 @@ public class BookController {
     @GetMapping("/")
     List<BookDto> findAll() {
         counter.increment();
+        log.info("Get /");
         return bookService.findAll();
     }
 
@@ -55,6 +58,7 @@ public class BookController {
     //return 201 instead of 200
     @ResponseStatus(HttpStatus.CREATED)
     BookDto newBookDto(@RequestBody BookDto newBookDto) {
+        log.info("New book");
         return bookService.save(newBookDto);
     }
 
@@ -70,6 +74,7 @@ public class BookController {
                     content = @Content)})
     @GetMapping("/books/{id}")
     BookDto findOne(@PathVariable Long id) {
+        log.info("Find book by ID {}", id);
         return bookService.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
     }
@@ -77,6 +82,7 @@ public class BookController {
     // Save or update
     @PutMapping("/{id}")
     BookDto saveOrUpdate(@RequestBody BookDto newBookDto, @PathVariable Long id) {
+        log.info("Save or update book by id: {}", id);
         Timer.Sample sample = Timer.start(meterRegistry);
         BookDto result = bookService.findById(id)
                 .map(x -> {
@@ -97,7 +103,7 @@ public class BookController {
     // update author only
     @PatchMapping("/{id}")
     BookDto patch(@RequestBody Map<String, String> update, @PathVariable Long id) {
-
+        log.info("Patch book by id:{}", id);
         return bookService.findById(id)
                 .map(x -> {
 
@@ -120,6 +126,7 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     void deleteBookDto(@PathVariable Long id) {
+        log.info("Delete book by id:{}", id);
         bookService.deleteById(id);
     }
 

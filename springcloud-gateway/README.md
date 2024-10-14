@@ -16,3 +16,4 @@ H2 DataBase:
 http://localhost:30000/swagger-ui.html
 
 kubectl -n nsapp logs -f $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springcloud-gateway | head -1)
+kubectl -n nsapp -it exec $(kubectl -n nsapp get pods --field-selector status.phase=Running --no-headers -o custom-columns=":metadata.name" | grep springcloud-gateway | head -1) -- bash

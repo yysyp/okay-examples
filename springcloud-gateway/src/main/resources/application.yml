@@ -51,7 +51,7 @@ spring:
         -   id: springboot-jpa-demo-service_k8s
             predicates:
               - Path=/k8sjpademo/**
-            uri: http://springcloud-gateway-service.nsapp.svc.cluster.local:10001
+            uri: http://springboot-jpa-demo-service.nsapp.svc.cluster.local:10001
             filters:
               - StripPrefix=1
             method: GET

@@ -24,6 +24,7 @@ public class VersionController {
 
     @GetMapping("/git")
     public Properties getGitInfo() throws IOException {
+        log.info("Get git info");
         Properties properties = new Properties();
         properties.put("spring.application.name", applicationName);
 

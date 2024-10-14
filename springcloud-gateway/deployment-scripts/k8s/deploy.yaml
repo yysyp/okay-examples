@@ -23,8 +23,8 @@ spec:
     spec:
       containers:
         - name: springcloud-gateway
-#          image: "xxx.com/path/repo/springcloud-gateway:20241014-185738"
-          image: "springcloud-gateway:20241014-185738"
+#          image: "xxx.com/path/repo/springcloud-gateway:20241014-192802"
+          image: "springcloud-gateway:20241014-192802"
           ports:
             - containerPort: 10000
           livenessProbe:
