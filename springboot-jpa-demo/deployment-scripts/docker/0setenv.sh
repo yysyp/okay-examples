@@ -1,7 +1,7 @@
 #! /bin/bash
 set -eu
 
-echo "Make sure you mvn rebuild the latest jar!!!"
+
 echo "Please set NEXUS_USER & NEXUS_PASS if you'd like to connect to NEXUS."
 export NEXUS_USER=user1
 export NEXUS_PASS=`cat /d/patrick/NEXUS_PASS.txt`

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: app
+  name: nsapp
   labels:
     namespace: nsapp
 ---
@@ -23,16 +23,16 @@ spec:
     spec:
       containers:
         - name: springboot-jpa-demo
-#          image: "xxx.com/path/repo/springboot-jpa-demo:20241010-145220"
-          image: "springboot-jpa-demo:20241010-145220"
+#          image: "xxx.com/path/repo/springboot-jpa-demo:20241014-123507"
+          image: "springboot-jpa-demo:20241014-123507"
           ports:
             - containerPort: 10001
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 10001
-            initialDelaySeconds: 3
-            periodSeconds: 3
+            initialDelaySeconds: 120
+            periodSeconds: 30
           env:
             - name: APPID
               valueFrom:
