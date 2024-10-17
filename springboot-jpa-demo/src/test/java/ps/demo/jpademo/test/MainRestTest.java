@@ -1,4 +1,4 @@
-package ps.demo.resttest;
+package ps.demo.jpademo.test;
 
 import cn.hutool.core.lang.Console;
 import cn.hutool.json.JSONArray;

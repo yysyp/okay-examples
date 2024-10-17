@@ -1,4 +1,4 @@
-package ps.demo.resttest;
+package ps.demo.user.test;
 
 import cn.hutool.core.lang.Console;
 import cn.hutool.json.JSONArray;
@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import ps.demo.commonlibx.common.JsonToolX;
 import ps.demo.commonlibx.common.RestTemplateTool;
-import ps.demo.user.MainApplication;
+import ps.demo.user.UserMainApplication;
 
 @ContextConfiguration
-@SpringBootTest(classes = MainApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = UserMainApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class MainRestTest {
     static String baseUrl = "http://localhost:17450";
 

@@ -22,10 +22,10 @@ import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
-public class MainApplication {
+public class UserMainApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MainApplication.class, args);
+        SpringApplication.run(UserMainApplication.class, args);
     }
 
     // Spring runs CommandLineRunner bean when Spring Boot App starts
