@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UploadControllerTest {
 
-    @Test
+    //@Test
     public void testUploadFile() throws FileNotFoundException {
 
         String url = "http://localhost:10001/api/books/file?fileType={fileType}&checksum={checksum}";

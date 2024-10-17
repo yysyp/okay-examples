@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import ps.demo.commupload.CommonMainApplication;
+import ps.demo.commupload.config.CommonUploadAutoConfiguration;
 import ps.demo.starteruse.entity.Book;
 import ps.demo.starteruse.repository.BookRepository;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 @Slf4j
 @SpringBootApplication
+@EntityScan({"ps.demo.starteruse"})
 @EnableJpaRepositories({"ps.demo.starteruse"})
 public class MainApplication {
 

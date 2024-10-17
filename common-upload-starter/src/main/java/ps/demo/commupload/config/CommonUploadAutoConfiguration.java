@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @ComponentScan(basePackages = "ps.demo.commupload")
-@EnableJpaRepositories("ps.demo.commupload")
+@EntityScan({"ps.demo.commupload"})
+@EnableJpaRepositories({"ps.demo.commupload"})
 public class CommonUploadAutoConfiguration {
 
 }
