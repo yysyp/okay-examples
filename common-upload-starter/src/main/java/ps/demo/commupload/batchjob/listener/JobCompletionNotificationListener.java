@@ -10,6 +10,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.util.Map;
 
 public class JobCompletionNotificationListener implements JobExecutionListener {
 
@@ -25,6 +26,8 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         //JobParameters jobParameters = jobExecution.getJobParameters();
+        Map<String, Object> jobExecutioncontextMap = jobExecution.getExecutionContext().toMap();
+        log.info("After job context map={}", jobExecutioncontextMap);
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
             log.info("JOB FINISHED !!");
             if (resources == null) {

@@ -1,8 +1,10 @@
 package ps.demo.commupload.batchjob.job;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -15,6 +17,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +32,9 @@ import ps.demo.commupload.batchjob.reader.MyPoiItemReader;
 import ps.demo.commupload.excel.PersonRowMapper;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
+@Slf4j
 @Configuration
 public class ExcelToDatabaseJob {
 
@@ -78,7 +83,9 @@ public class ExcelToDatabaseJob {
 
     @Bean(name = "excelFileReader")
     @StepScope
-    public MyPoiItemReader<Person> excelFileReader(@Value("#{jobParameters['tempFile']}") String tempFilePath) {
+    public MyPoiItemReader<Person> excelFileReader(@Value("#{jobParameters['tempFile']}") String tempFilePath
+                                                   ) {
+
         MyPoiItemReader<Person> reader = new MyPoiItemReader<>();
         reader.setResource(new FileSystemResource(tempFilePath)); // Path to your Excel file
         reader.setLinesToSkip(2); // Skip header row if present
@@ -92,6 +99,7 @@ public class ExcelToDatabaseJob {
         return reader;
     }
 
+/* Comment out to avoid conflict with: ps.demo.commupload.batchjob.job.CsvToDatabaseJob.jdbcItemWriter */
 //    @Bean
 //    public JdbcBatchItemWriter<Person> jdbcItemWriter(DataSource dataSource) {
 //        var provider = new BeanPropertyItemSqlParameterSourceProvider<Person>();
