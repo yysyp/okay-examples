@@ -1,4 +1,64 @@
 
+## JPA jpa springboot jpa使用 entity relationship mapping onetoone onetomany manytoone manytomany usage:
+## 搞清楚几个概念：
+### 外键：引用别的表的键的键，比如轮胎引用车子，那么轮胎表里面的car_id字段就叫做外键。
+
+### 维护关联关系方： 这个是JPA Entity 对象的概念，表示该Entity负责维护与其他Entity的关系。指有外键的表的Entity。
+
+### @OneToOne @OneToMany @ManyToOne @ManyToMany 表示的是所在的当前的Entity对象与标注的属性对象的关系，例如：
+```java
+public class Car {
+    ......
+    @OneToMany
+    private List<Wheel> wheels;
+}
+```
+
+### @ManyToMany 代表多对多的关联关系、这种关联关系任何一方都可以维护关联关系。一般ManyToMany会用@JoinTable注解创建一张中间表，
+### 并且添加了两个设定的外键个中间表， 或者使用成对的@ManyToOne 和 @OneToMany代替，因为我们的中间表可能还有一些约定的公共字段，
+### 如 ID,update_time,create_time等其他字段。
+```java
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String name;
+    
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles", //中间表名称
+        joinColumns = @JoinColumn(name = "user_id"), //维护关联关系一方的外键字段的名字
+        inverseJoinColumns = @JoinColumn(name = "role_id") //另一方表的外键字段的名字
+    )
+    private Set<Role> roles;
+}
+
+@Entity
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    
+    /*
+    mappedBy的值是指另一方的实体里面属性的字段，而不是数据库字段，也不是实体的对象
+    的名字。也就是维护关联关系的一方属性字段名称，或者加了@JoinColumn 或 @JoinTable
+    注解的属性字段名称。这里是class User的Set<Role> roles属性的属性名称：roles
+     */
+    @ManyToMany(mappedBy = "roles") 
+    private Set<User> users;
+    
+}
+
+```
+
+
+
+------------------------------------------------------------------------------------------------------------
 以下是Spring Boot中JPA（Java Persistence API）的一些常用注解：
 
 1. @Entity
