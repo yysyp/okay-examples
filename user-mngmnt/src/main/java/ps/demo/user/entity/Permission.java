@@ -10,7 +10,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,6 +26,7 @@ public class Permission {
     private String createdBy;
 
     @ManyToMany(mappedBy = "permissions")
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     public void addRole(Role role) {

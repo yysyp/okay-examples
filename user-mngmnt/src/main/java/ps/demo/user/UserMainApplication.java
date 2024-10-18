@@ -8,12 +8,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import ps.demo.user.entity.Book;
+import ps.demo.user.entity.Permission;
 import ps.demo.user.entity.Role;
 import ps.demo.user.entity.User;
 import ps.demo.user.repository.BookRepository;
 import ps.demo.user.repository.RoleRepository;
 import ps.demo.user.repository.UserRepository;
 import ps.demo.user.service.RoleService;
+import ps.demo.user.service.UserService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,7 +36,7 @@ public class UserMainApplication {
     // Spring runs CommandLineRunner bean when Spring Boot App starts
     @Profile("dev")
     @Bean
-    public CommandLineRunner demo(ApplicationContext ctx, BookRepository bookRepository, UserRepository userRepository, RoleRepository roleRepository) {
+    public CommandLineRunner demo(ApplicationContext ctx, BookRepository bookRepository, UserService userService) {
         return (args) -> {
 
             String[] beanNames = ctx.getBeanDefinitionNames();
@@ -82,8 +84,64 @@ public class UserMainApplication {
             roles.add(role);
             user.setRoles(roles);
 
-            roleRepository.save(role);
-            userRepository.save(user);
+
+            //Define permission - role - user
+            Permission permissionAction = Permission.builder()
+                    .permissionName("Action")
+                    .displayName("action")
+                    .build();
+
+            Permission permissionView = Permission.builder()
+                    .permissionName("View")
+                    .displayName("View")
+                    .build();
+
+            Permission permissionEdit = Permission.builder()
+                    .permissionName("Edit")
+                    .displayName("Edit")
+                    .build();
+
+            Role roleAdmin = Role.builder()
+                    .roleName("Admin")
+                    .displayName("admin")
+                    .build();
+            roleAdmin.addPermission(permissionAction);
+            roleAdmin.addPermission(permissionEdit);
+            roleAdmin.addPermission(permissionView);
+
+            Role roleReporter = Role.builder()
+                    .roleName("Reporter")
+                    .displayName("reporter")
+                    .build();
+            roleReporter.addPermission(permissionView);
+
+            Role roleSubmitter = Role.builder()
+                    .roleName("Submitter")
+                    .displayName("submitter")
+                    .build();
+            roleSubmitter.addPermission(permissionView);
+            roleSubmitter.addPermission(permissionEdit);
+
+
+            User user1 = User.builder()
+                    .username("patrick")
+                    .displayName("Patrick S")
+                    .createdTime(LocalDateTime.now())
+                    .createdBy("sys")
+                    .build();
+            user1.addRole(roleAdmin);
+
+            User user2 = User.builder()
+                    .username("bob")
+                    .displayName("Bob X")
+                    .createdTime(LocalDateTime.now())
+                    .createdBy("sys")
+                    .build();
+            user2.addRole(roleReporter);
+            user2.addRole(roleSubmitter);
+
+            userService.saveUser(user1);
+            userService.saveUser(user2);
 
 
         };

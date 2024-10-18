@@ -10,7 +10,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -34,15 +33,16 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @Builder.Default
     private Set<Role> roles = new HashSet<Role>();
 
     public void addRole(Role role) {
-        this.roles.add(role);
+        this.getRoles().add(role);
         role.getUsers().add(this);
     }
 
     public void removeRole(Role role) {
-        this.roles.remove(role);
+        this.getRoles().remove(role);
         role.getUsers().remove(this);
     }
 

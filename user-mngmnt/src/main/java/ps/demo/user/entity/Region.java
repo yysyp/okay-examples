@@ -10,7 +10,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,6 +24,7 @@ public class Region {
     private String displayName;
 
     @OneToMany(mappedBy = "region")
+    @Builder.Default
     private Set<Country> countries = new HashSet<>();
 
     public void addCountry(Country country) {

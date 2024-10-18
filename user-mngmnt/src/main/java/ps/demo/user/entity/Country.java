@@ -10,7 +10,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,6 +23,7 @@ public class Country {
     private String countryName;
 
     @OneToMany(mappedBy = "country")
+    @Builder.Default
     private Set<Site> sites = new HashSet<>();
 
     @ManyToOne
