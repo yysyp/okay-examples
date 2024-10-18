@@ -82,6 +82,7 @@ public class UserMainApplication {
             roles.add(role);
             user.setRoles(roles);
 
+            roleRepository.save(role);
             userRepository.save(user);
 
 
