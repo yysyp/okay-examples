@@ -9,14 +9,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import ps.demo.user.entity.Book;
 import ps.demo.user.entity.Role;
+import ps.demo.user.entity.User;
 import ps.demo.user.repository.BookRepository;
 import ps.demo.user.repository.RoleRepository;
+import ps.demo.user.repository.UserRepository;
 import ps.demo.user.service.RoleService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +34,7 @@ public class UserMainApplication {
     // Spring runs CommandLineRunner bean when Spring Boot App starts
     @Profile("dev")
     @Bean
-    public CommandLineRunner demo(ApplicationContext ctx, BookRepository bookRepository, RoleRepository roleRepository, RoleService roleService) {
+    public CommandLineRunner demo(ApplicationContext ctx, BookRepository bookRepository, UserRepository userRepository, RoleRepository roleRepository) {
         return (args) -> {
 
             String[] beanNames = ctx.getBeanDefinitionNames();
@@ -64,7 +67,22 @@ public class UserMainApplication {
             });
 
             // initiate role data
+            User user = User.builder()
+                    .username("patrick")
+                    .displayName("Patrick Song")
+                    .createdBy("sys")
+                    .createdTime(LocalDateTime.now()).build();
+            Role role = Role.builder()
+                    .roleName("sys")
+                    .displayName("System")
+                    .createdBy("sys")
+                    .createdTime(LocalDateTime.now()).build();
 
+            HashSet<Role> roles = new HashSet<>();
+            roles.add(role);
+            user.setRoles(roles);
+
+            userRepository.save(user);
 
 
         };

@@ -79,6 +79,11 @@ orphanRemoval = true 先将user_info表中的数据外键user_id 更新为 null�
 @ManyToOne 的Lazy效果和 @OneToOne 的一样，所以和上面的用法基本一致；
 @OneToMany 的Lazy是有效果的;
 
+### JPA Hibernate status flow: 
+![img.png](jpa-hiabernate-status-flow.png)
+
+
+
 ------------------------------------------------------------------------------------------------------------
 以下是Spring Boot中JPA（Java Persistence API）的一些常用注解：
 
