@@ -3,7 +3,9 @@ package ps.demo.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,9 +24,19 @@ public class Country {
     private String countryName;
 
     @OneToMany(mappedBy = "country")
-    private List<Site> sites;
+    private Set<Site> sites = new HashSet<>();
 
     @ManyToOne
     private Region region;
+
+    public void addSite(Site site) {
+        this.getSites().add(site);
+        site.setCountry(this);
+    }
+
+    public void removeSite(Site site) {
+        this.getSites().remove(site);
+        site.setCountry(null);
+    }
 
 }

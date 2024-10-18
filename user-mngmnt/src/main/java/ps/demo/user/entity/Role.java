@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,7 +29,7 @@ public class Role {
     private String createdBy;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -36,6 +37,26 @@ public class Role {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<>();
+
+    public void addUser(User user) {
+        this.getUsers().add(user);
+        user.getRoles().add(this);
+    }
+
+    public void removeUser(User user) {
+        this.getUsers().remove(user);
+        user.getRoles().remove(this);
+    }
+
+    public void addPermission(Permission permission) {
+        this.getPermissions().add(permission);
+        permission.getRoles().add(this);
+    }
+
+    public void removePermission(Permission permission) {
+        this.getPermissions().remove(permission);
+        permission.getRoles().remove(this);
+    }
 
 }

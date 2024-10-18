@@ -1,5 +1,5 @@
 
-## JPA jpa springboot jpa使用 entity relationship mapping onetoone onetomany manytoone manytomany usage:
+## JPA must read. JPA jpa springboot jpa使用 entity relationship mapping onetoone onetomany manytoone manytomany usage:
 ## 搞清楚几个概念：
 ### 外键：引用别的表的键的键，比如轮胎引用车子，那么轮胎表里面的car_id字段就叫做外键。
 
@@ -82,9 +82,84 @@ orphanRemoval = true 先将user_info表中的数据外键user_id 更新为 null�
 ### JPA Hibernate status flow: 
 ![img.png](jpa-hiabernate-status-flow.png)
 
+### Important considerations, best practices:
+
+You should instead model a many-to-many association as a java.util.Set, which is more efficient.
+
+Provide utility methods to add or remove an entity from an association.
+
+Always use FetchType.LAZY, which is the default, to avoid performance problems (FetchType.EAGER will trigger N associate object queries). 
+So use FetchType.LAZY and "JOIN FETCH" to query it performances better.
+i.e.
+```java
+
+//1) Fetch Join in JPQL:
+        Query q = this.em.createQuery("SELECT o FROM Order o JOIN FETCH o.items i WHERE o.id = :id");
+        q.setParameter("id", orderId);
+        newOrder = (Order) q.getSingleResult();
+
+//2) Fetch Join in Criteria API:
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery q = cb.createQuery(Order.class);
+        Root o = q.from(Order.class);
+        o.fetch("items", JoinType.INNER);
+        q.select(o);
+        q.where(cb.equal(o.get("id"), orderId));
+        Order order = (Order)this.em.createQuery(q).getSingleResult();
+        
+//3) Named Entity Graph:
+    @Entity
+    @NamedEntityGraph(name = "graph.Order.items",
+            attributeNodes = @NamedAttributeNode("items"))
+    public class Order implements Serializable { ... }
+        EntityGraph graph = this.em.getEntityGraph("graph.Order.items");
+    
+        Map hints = new HashMap();
+    hints.put("javax.persistence.fetchgraph", graph);
+    Order order = this.em.find(Order.class, orderId, hints);
+        
+```
+ref: https://thorben-janssen.com/5-ways-to-initialize-lazy-relations-and-when-to-use-them/
+
+Apply query-specific fetching to avoid n+1 select issues.
+
+Don’t use the CascadeTypes REMOVE and ALL.
+You shouldn’t use the CascadeType.REMOVE for to-many associations. And CascadeType.ALL includes the CascadeType.REMOVE.
+The cascading requires a lot of SQL statements and in the worst case removes more records than you intended.
+So instead you should delete the associated entities yourself. You can either do that by calling the remove method for each entity or with a bulk operation.
+ref: https://thorben-janssen.com/avoid-cascadetype-delete-many-assocations/
+
+FetchType: Consider the fetch type (LAZY or EAGER) for the relationship.
+CascadeType: Use cascade types carefully to control how changes to one entity affect the other.
+Owning side: Choose the owning side of the relationship wisely to simplify data management.
 
 
-------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 以下是Spring Boot中JPA（Java Persistence API）的一些常用注解：
 
 1. @Entity
