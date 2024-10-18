@@ -3,7 +3,7 @@
 ## 搞清楚几个概念：
 ### 外键：引用别的表的键的键，比如轮胎引用车子，那么轮胎表里面的car_id字段就叫做外键。
 
-### 维护关联关系方： 这个是JPA Entity 对象的概念，表示该Entity负责维护与其他Entity的关系。指有外键的表的Entity。
+### 维护关联关系方： 这个是JPA Entity 对象的概念，表示该Entity负责维护与其他Entity的关系。有外键的表的Entity就是关系维护方，而且另一方必须配置mappedBy。
 
 ### @OneToOne @OneToMany @ManyToOne @ManyToMany 表示的是所在的当前的Entity对象与标注的属性对象的关系，例如：
 ```java
@@ -55,8 +55,29 @@ public class Role {
 }
 
 ```
+### cascade 级联：
+一般是多对一和多对多的时候不使用级联，一对一和一对多可以使用级联，这两种情况使用级联比较多，总结来说，这个对象归你控制，
+你就能够级联，它不归你一个人所有，那你就不要级联。
+default CascadeType is none. This means that no operations are cascaded by default.
 
+cascade: CascadeType[] cascade() default {};
+CascadeType.PERSIST 级联新建
+CascadeType.REMOVE 级联删除
+CascadeType.PEFRESH 级联刷新
+CascadeType.MERGE 级联更新
+CascadeType.ALL 四项全选
 
+orphanRemoval表示当关联关系被删除的时候，是否应用级联删除。 默认为 false。
+
+orphanRemoval 和 CascadeType.REMOVE的区别
+CascadeType.REMOVE 级联删除，先删除user表的数据，再删除user_info表的数据。  （因为存在外键关联，无法先删除user_info表的数据）
+orphanRemoval = true 先将user_info表中的数据外键user_id 更新为 null，然后删除user_info表的数据,再删除user表的数据。
+
+### 特点：
+@ManyToOne 一定是维护外键关系的一方，所以没有mappedBy字段;
+@ManyToOne 删除的时候一定不能把One的一方删除了，所以也没有orphanRemoval选项;
+@ManyToOne 的Lazy效果和 @OneToOne 的一样，所以和上面的用法基本一致；
+@OneToMany 的Lazy是有效果的;
 
 ------------------------------------------------------------------------------------------------------------
 以下是Spring Boot中JPA（Java Persistence API）的一些常用注解：
@@ -206,7 +227,7 @@ public class User {
     @OneToOne(mappedBy = "user") 
     /*
     mappedBy：关联关系维护方(UserInfo)对象里面的被维护方(User)的属性名字, 双向关联的时候必填。
-    mappedBy只有关联关系的维护方才能操作两个实体之间外键的关系。被维护方即使设置维护方属性进行存储也不会更新外键关联。
+    mappedBy后只有关联关系的维护方才能操作两个实体之间外键的关系。被维护方即使设置维护方属性进行存储也不会更新外键关联。
     mappedBy不能与@JoinColumn或者@JoinTable同时使用，因为没有任何意义，关联关系不在这里面维护。
     mappedBy的值是指另一方的实体里面属性的字段，而不是数据库字段，也不是实体的对象的名字。
     也就是维护关联关系的一方属性字段名称，或者加了@JoinColumn 或 @JoinTable注解的属性字段名称。
@@ -280,22 +301,6 @@ private Long id;
 
 
 ---
-#### 级联：
-一般是多对一和多对多的时候不使用级联，一对一和一对多可以使用级联，这两种情况使用级联比较多，总结来说，这个对象归你控制，
-你就能够级联，它不归你一个人所有，那你就不要级联。
-
-cascade: CascadeType[] cascade() default {};
-CascadeType.PERSIST 级联新建
-CascadeType.REMOVE 级联删除
-CascadeType.PEFRESH 级联刷新
-CascadeType.MERGE 级联更新
-CascadeType.ALL 四项全选
-
-orphanRemoval表示当关联关系被删除的时候，是否应用级联删除。
-
-orphanRemoval 和 CascadeType.REMOVE的区别
-CascadeType.REMOVE 级联删除，先删除user表的数据，再删除user_info表的数据。  （因为存在外键关联，无法先删除user_info表的数据）
-orphanRemoval = true 先将user_info表中的数据外键user_id 更新为 null，然后删除user_info表的数据,再删除user表的数据。
 
 
 ---
