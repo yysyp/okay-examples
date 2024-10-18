@@ -18,12 +18,12 @@ public class RoleService {
     @Transactional
     public void testAutoSaveModification() {
         Optional<Role> role = roleRepository.findById(1L);
-        role.orElseThrow().setRoleName("haha role name changed"); //This will trigger auto save
+        role.orElseThrow().setDisplayName("haha role name changed"); //This will trigger auto save
     }
 
     @Transactional
     public void testNotAutoSaveModification(Role role) {
-        role.setRoleName("haha not change"); //This will not trigger auto save if the role entity left previous transaction context.
+        role.setDisplayName("haha not change"); //This will not trigger auto save if the role entity left previous transaction context.
     }
 
 }

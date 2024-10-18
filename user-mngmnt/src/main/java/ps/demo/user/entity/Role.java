@@ -1,13 +1,11 @@
 package ps.demo.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,8 +22,20 @@ public class Role {
     private Long id;
     private Long parentId;
     private String roleName;
+    private String displayName;
     private String description;
     private LocalDateTime createdTime;
     private String createdBy;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions;
 
 }

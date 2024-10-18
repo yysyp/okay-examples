@@ -65,29 +65,7 @@ public class UserMainApplication {
 
             // initiate role data
 
-            roleRepository.save(Role.builder().roleName("root").description("root").createdTime(LocalDateTime.now()).createdBy("sys").build());
-            roleRepository.save(Role.builder().roleName("a").parentId(1L).description("a").createdTime(LocalDateTime.now()).createdBy("sys").build());
-            roleRepository.save(Role.builder().roleName("b").parentId(1L).description("b").createdTime(LocalDateTime.now()).createdBy("sys").build());
-            roleRepository.save(Role.builder().roleName("a1").parentId(2L).description("a1").createdTime(LocalDateTime.now()).createdBy("sys").build());
-            roleRepository.save(Role.builder().roleName("a2").parentId(2L).description("a2").createdTime(LocalDateTime.now()).createdBy("sys").build());
-            roleRepository.save(Role.builder().roleName("b1").parentId(3L).description("b1").createdTime(LocalDateTime.now()).createdBy("sys").build());
 
-
-            log.info("Print out role list1: ");
-            List<Role> list1 = roleRepository.findAllChildRoles(1L);
-            list1.forEach((e) -> {
-                log.info("role: {}", e);
-            });
-
-            log.info("Print out role list2: ");
-            List<Role> list2 = roleRepository.findAllChildRoles(2L);
-            list2.forEach((e) -> {
-                log.info("role: {}", e);
-            });
-
-            //list2.get(0).setRoleName("haha test~");
-            roleService.testAutoSaveModification();
-            roleService.testNotAutoSaveModification(list2.get(0));
 
         };
     }
