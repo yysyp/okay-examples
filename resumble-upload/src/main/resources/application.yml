@@ -1,0 +1,90 @@
+server:
+  port: 18264
+  tomcat:
+    connection-timeout: 5000 # unit is ms
+
+logging:
+  level:
+    root: ERROR
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
+    ps.demo: DEBUG
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr(${LOGGED_APPLICATION_NAME:-}[%15.15t]){faint} %clr(${LOG_CORRELATION_PATTERN:-}){faint}%clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}
+
+spring:
+  application:
+    name: resumble-upload
+  profiles:
+    active: dev
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+      poolName: HikariPoolOK
+
+    url: jdbc:h2:mem:resumble-upload;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    initialization-mode: embedded
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+      settings:
+        web-allow-others: true
+      trace: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+
+
+management:
+  security:
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus, schema
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: sit
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: uat
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  h2:
+    console:
+      path: /h2-console
+      enabled: false
