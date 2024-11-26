@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>碳普惠</title>
+</head>
+<style>
+    .file-contain {
+        margin: 30px auto;
+        text-align: center;
+    }
+    .choose-file {
+
+    }
+    .submit-file {
+        color: #FFF;
+        background-color: #409EFF;
+        border-color: #409EFF;
+        font-size: 12px;
+        border-radius: 3px;
+        padding: 6px 15px;
+        margin: 0 10px;
+        width: 80px;
+    }
+</style>
+<body>
+
+<div class="file-contain">
+    <hr/>
+    <!--<p>摸板下载</p>-->
+    <!--<a href="/excel/download">下载摸板</a>-->
+    <!--<hr/>-->
+    <!--<p>文件上传</p>-->
+    <!--<form action="/excel/import" method="POST" enctype="multipart/form-data">-->
+    <!--    文件：<input type="file" name="file"/>-->
+    <!--    <input type="submit"/>-->
+    <!--</form>-->
+    <!--<hr/>-->
+
+    <p style="font-size: 25px">上传导出的用户数据，减排量数据excel，自动下载生成好的数据</p>
+    <form action="/excel/imports" method="POST" enctype="multipart/form-data">
+        用户数据Excel文件：<input type="file" name="files" class="choose-file" />
+        减排量数据Excel文件：<input type="file" name="files" class="choose-file"/>
+        <input type="submit" value="提交" class="submit-file"/>
+    </form>
+    <hr/>
+</div>
+
+</body>
+</html>

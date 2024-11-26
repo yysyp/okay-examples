@@ -17,6 +17,11 @@ spring:
     name: resumble-upload
   profiles:
     active: dev
+  servlet:
+    multipart:
+      enabled: false
+      max-file-size: 1GB
+      max-request-size: 10GB
   datasource:
     hikari:
       connectionTimeout: 20000

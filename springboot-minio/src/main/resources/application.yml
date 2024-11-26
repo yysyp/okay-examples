@@ -1,0 +1,18 @@
+# 配置端口
+server:
+  port: 8088
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+#minio配置(下面5个都要替换成自己的)
+minio:
+  access-key: li5L23333AOb96ezW2
+  secret-key: p4VIZfH123OTMkQcZHaP0W1ddV123wluyc9b
+  url: http://169.213.19.42:9000
+  # 地址最后要加 /
+  public-url:  http://169.213.19.42:9000/
+  bucket-name: test

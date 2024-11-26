@@ -20,8 +20,15 @@ H2 DataBase:
 </pre>
 
 --
+MinIO: https://blog.csdn.net/joshua317/article/details/128259365?ops_request_misc=%257B%2522request%255Fid%2522%253A%25228ff3c3768c0448e68f2a8c4bde560296%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=8ff3c3768c0448e68f2a8c4bde560296&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-5-128259365-null-null.142^v100^pc_search_result_base9&utm_term=minio&spm=1018.2226.3001.4187
+
 SpringBoot 实战：文件上传之秒传、断点续传、分片上传:
+https://blog.csdn.net/MarkerHub/article/details/129253226
+
 https://www.51cto.com/article/801461.html
+https://www.51cto.com/article/791860.html
+
+
 
 断点续传（Resumable File Upload）是一种文件上传的技术，它允许在上传过程中出现中断或失败的情况下，能够从中断的位置继续上传，而不需要重新上传整个文件。这在处理大文件或不稳定的网络连接时非常有用。
 断点续传的实现通常涉及以下几个关键概念和步骤：
