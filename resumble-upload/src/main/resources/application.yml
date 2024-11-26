@@ -19,7 +19,7 @@ spring:
     active: dev
   servlet:
     multipart:
-      enabled: false
+#      enabled: false
       max-file-size: 1GB
       max-request-size: 10GB
   datasource:
