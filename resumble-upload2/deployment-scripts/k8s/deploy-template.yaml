@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nsapp
+  labels:
+    namespace: nsapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resumble-upload2
+  namespace: nsapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resumble-upload2
+  template:
+    metadata:
+      labels:
+        app: resumble-upload2
+    spec:
+      containers:
+        - name: resumble-upload2
+#          image: "xxx.com/path/repo/resumble-upload2:THE_APP_VERSION"
+          image: "resumble-upload2:THE_APP_VERSION"
+          ports:
+            - containerPort: 17294
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 17294
+            initialDelaySeconds: 120
+            periodSeconds: 30
+          env:
+            - name: APPID
+              valueFrom:
+                secretKeyRef:
+                  name: resumble-upload2-key
+                  key: appid
+            - name: APPSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: resumble-upload2-key
+                  key: appsecret
+          volumeMounts:
+            - name: myvolume
+              mountPath: /app/volume
+              readOnly: true
+      volumes:
+        - name: myvolume
+          secret:
+            secretName: resumble-upload2-key
+#            items:
+#              - key: key.pem
+#                path: key.pem
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resumble-upload2-service
+  namespace: nsapp
+  labels:
+    app: resumble-upload2
+spec:
+  ports:
+    - port: 17294 # between containers for service call for K8s
+      targetPort: 17294 # container port
+      nodePort: 37294 # by default >30000 for external call
+  type: NodePort
+  selector:
+    app: resumble-upload2
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: resumble-upload2-key
+  namespace: nsapp
+type: Opaque
+data:
+  appid: QVBQMTIzNA==
+  appsecret: UGFzc3dkXzEyMzQ1Ng==
+  key.pem: VGhpcyBpcyB0aGUgZGF0YSBmcm9tIGtleS5wZW0gZmlsZSBmcm9tIHNlY3JldApnb29kIGx1Y2t+Cl9fa3ViZXJuZXRzIHNlY3JldHM=
