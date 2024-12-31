@@ -1,10 +1,13 @@
 package ps.demo.jpademo.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +26,7 @@ public class VersionController {
     private String applicationName;
 
     @GetMapping("/git")
-    public Properties getGitInfo() throws IOException {
+    public Properties getGitInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.info("Get git info");
         Properties properties = new Properties();
         properties.put("spring.application.name", applicationName);
