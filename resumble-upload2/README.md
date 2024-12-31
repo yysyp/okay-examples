@@ -92,3 +92,21 @@ H2 DataBase:
 </pre>
 
 ---
+#### Frontend setup, in frontend folder:
+- Install nodeJS 18+
+- Generate .npmrc file to Home folder by: npm config set always_auth true
+- Modify the .npmrc file to add: 
+```properties
+strict-ssl=false
+registry=https://xxx/npm-host/
+```
+- Generate the registry authToken to the .npmrc file by run: npm login n
+- If npx command doesn't exist, run: npm i -g npx
+- Run: npx create-react-app my-app
+- Run: cd my-app
+- Run: npm install
+- Run: npm start
+- Visit: http://localhost:3000/
+- Run: npm run build
+- Copy all content in build folder, and paste to springboot project folder: src/main/resources/static
+- 
