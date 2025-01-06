@@ -14,11 +14,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ThreadPoolConfig {
 
 
-    @Value("${threadpool corePoolSize:4}")
+    @Value("${threadpool corePoolSize:#{T(java.lang.Runtime).getRuntime().availableProcessors()}}")
     private int corePoolSize;
-    @Value("${threadpool.maxPoolSize: 10}")
+    @Value("${threadpool.maxPoolSize:#{T(java.lang.Runtime).getRuntime().availableProcessors() * 2}}")
     private int maxPoolSize;
-    @Value("${threadpool.queueCapacity: 20}")
+    @Value("${threadpool.queueCapacity: 50}")
     private int queueCapacity;
     @Value("${ threadpool.keepALiveSeconds: 60}")
     private int keepAliveSeconds;

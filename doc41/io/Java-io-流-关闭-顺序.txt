@@ -1,0 +1,184 @@
+
+流相关资源一般遵循：
+
+先开输入再开输出，先关输出再关输入。
+开输入->开输出->操作->关输出->关输入
+
+相关外层再关内层。
+开内层->开外层->操作->关外层->关内层
+
+只关处理流（保证流），不关节点流（处理流（包装流）调用了节点流的关闭）————但是这个的前提是包装流和节点流都创建成功了。
+如果包装流创建失败的情况，如果只是关闭包装流则可能导致节点流未被关闭的情况。
+
+开Connection -> 开PrepareStatement -> 开ResultSet -> 操作 -> 关ResultSet -> 关PrepareStatement -> 关Connection
+----------------------------------------------------------------------
+
+1)<<先开后关>>，先开的输入流，再开的输出流，通过读取输入流写入输出流中，
+那么应该先关输出流，再关输入流，
+但是一般关闭输入输出流操作都是在读写完成后的finally中执行的，所以即使先关输入流，再关输出流也不会任何问题，因为读写操作没有进行了。
+
+2)先关外层，再关内层。如BufferedInputStream包装了一个FileInputStream，那么先
+
+关BufferedInputStream，再关FileInputStream。但要注意的是由于一般处理流持有节点流引用，处理流都会在自己的close方法中去关闭节点流，因此我们只要关闭外层的处理流即可，如果多此一举的关闭节点流反而会报错。如BufferedInputStream包装了FileInputStream，我们只要关闭BufferedInputStream即可
+
+3)只关处理流，不关节点流，原因见上述第二条
+
+流相关文章参考：http://blog.csdn.net/u012250875/article/details/78341874
+1）节点流偏向实现细节，直接与细节打交道，比如FileInputStream，而包装（处理）流偏功能，以目标功能为抽象，比如PrintStream。
+2）区分节点流和包装（处理）流最简单的一个方式：处理流的构造方法中需要另一个流作为参数，而节点流构造方法则是具体的物理节点，如上FileInputStream构造法中需要一个文件路径或者File对象，而PrintStream构造方法中则需要一个流对象
+3）包装流使用了装饰器模式（什么是装饰器模式？传送门），包装流对节点流进行了一系列功能的强化包装，让包装后的流拥有了更多的操作手段或更高的操作效率，而隐藏节点流底层的复杂性。
+————————————————
+
+
+jdbc相关资源
+
+Connection，PrepareStatement，ResultSet三个资源。这三个资源的获取顺序是：
+
+先获得一个jdbc连接对象Connection，再通过连接对象获得一个sql预处理对象PrepareStatement，如果是查询的话最后还会通过PrepareStatement对象获取一个结果集ResultSet对象，关闭顺序与获取顺序正好相反。先关ResultSet，再关PrepareStatement，最后关Connection。
+————————————————
+
+--------------------------------------------------------------------------------------------
+
+总结：包装流的关闭其实是引用关闭，是调用被包装流的关闭方法。不论关闭包装流或者被包装流都可以。
+也就是以下代码只关闭fos.close();就可以了。
+public static void main(String[] args) throws IOException {
+	FileOutputStream fos = new FileOutputStream("d:\\a.txt");
+	BufferedOutputStream bos = new BufferedOutputStream(fos);
+	bos.write("test write something".getBytes());
+	bos.flush();
+	// 从包装流中关闭流
+	bos.close();
+	// 从被包装流中关闭流
+	fos.close();
+	// 下面测试一个流被多次关闭是不会报错的
+	fos.close();
+	fos.close();
+}
+
+如果你不放心，先关闭包装流fos.close()，再关闭被包装流fos.close();
+
+
+一般情况：先打开的后关闭，后打开的先关闭；
+另一种情况：看依赖关系，如果流a依赖流b，应该先关闭流a，再关闭流b。
+
+处理流a依赖节点流b，应该先关闭处理流a，再关闭节点流b
+当然完全可以只关闭处理流，不用关闭节点流。处理流关闭的时候，会调用其处理的节点流的关闭方法
+如果将节点流关闭以后再关闭处理流，会抛出IO异常；
+
+例如：
+Error的：
+public static void main(String[] args) throws Exception {
+        FileOutputStream fos = new FileOutputStream("d:\\a.txt");
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        BufferedWriter bw = new BufferedWriter(osw);
+        bw.write("java IO close test");
+
+        //从内带外顺序顺序会报异常！！！
+        fos.close();
+        osw.close();
+        bw.close();
+
+}
+
+Ok的：
+public static void main(String[] args) throws Exception {
+	FileOutputStream fos = new FileOutputStream("d:\\a.txt");
+	OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+	BufferedWriter bw = new BufferedWriter(osw);
+	bw.write("java IO close test");
+
+	// 从外到内顺序关闭ok
+	bw.close();
+	osw.close();
+	fos.close();
+}
+
+
+-------------------------------------------------------
+我正在写一段代码：
+
+OutputStream outputStream = new FileOutputStream(createdFile);
+
+GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream);
+
+BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(gzipOutputStream));
+
+我是否需要关闭以下每个流或作者？
+
+gzipOutputStream.close();
+
+bw.close();
+
+outputStream.close();
+
+或者只是关闭最后一个流好吗？
+
+bw.close();
+
+#1 热门回答(136 赞)
+
+假设所有流都被创建好了，是的，只需关闭bw就可以了解这些流实现;但这是一个很大的假设 (即所有流创建都没有问题)。
+
+我使用try-with-resources(tutorial)，以便构造抛出异常的后续流的任何问题不会使先前的流挂起，因此你不必依赖具有调用的流实现来关闭底层流：
+
+try (
+
+OutputStream outputStream = new FileOutputStream(createdFile);
+
+GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream);
+
+OutputStreamWriter osw = new OutputStreamWriter(gzipOutputStream);
+
+BufferedWriter bw = new BufferedWriter(osw)
+
+) {undefined
+
+// ...
+
+}
+
+请注意，你不再手动调用close。
+
+重要说明：要让资源尝试关闭它们，你必须在打开它们时将流分配给变量，不能使用嵌套。如果使用嵌套，则在构造其中一个后续流(例如，GZIPOutputStream)期间的异常将使由嵌套调用构造的任何流保持打开状态。
+
+
+try-with-resources语句使用变量(称为资源)进行参数化，这些变量在执行try块之前初始化并在执行try块后以与它们初始化的相反顺序自动关闭。
+
+注意"变量"这个词(我的重点)。
+
+例如，不要这样做：
+
+// DON'T DO THIS
+
+try (BufferedWriter bw = new BufferedWriter(
+
+new OutputStreamWriter(
+
+new GZIPOutputStream(
+
+new FileOutputStream(createdFile))))) {undefined
+
+// ...
+
+}
+
+...因为来自GZIPOutputStream(OutputStream)构造函数的异常(表示它可能会抛出IOException，并将标头写入基础流)将离开FileOutputStream开启。由于某些资源具有可能抛出的构造函数而其他资源没有，因此将它们单独列出是一个好习惯。
+
+--------
+HttpServletResponse.getOutputStream() 或 HttpServletResponse.getWriter() 不要手动关闭。底层Servlet容器会自动关闭。
+--------
+In SpringMVC, if your return org.springframework.core.io.Resource for controller response, i.e ResponseEntity<Resource>, SpringMVC
+org.springframework.http.converter.ResourceHttpMessageConverter will help to close the resource stream.
+but be careful,  ResponseEntity<Resource> is not reliably closed with InputStreamResource, the file downloads via Resource should always use the most specific
+Resource variant with on-demand stream access: either from a ResourceLoader (typically classpath or file system based) or through specific construction of a
+UrlResource or the like.
+Or you use try-with-resource to close it by your self like:
+S3Object s3object = amazonS3.getObject(bucket, id);
+try (InputStream is = s3Object.getObjectContent()) {
+    ObjectMetadata metadata = s3Object.getObjectMetadata();
+    response.setHeader(HttpHeaders.CONTENT_TYPE, metadata.getContentType());
+    response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(metadata.getnContentLength()));
+    is.transferTo(response.getOutputStream());
+}
+
+
