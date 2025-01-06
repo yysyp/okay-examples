@@ -17,6 +17,10 @@ spring:
     name: springboot-jpa-demo
   profiles:
     active: dev
+  mvc:
+    async:
+      request-timeout: -1
+  #      request-timeout: 300000
   datasource:
     hikari:
       connectionTimeout: 20000
