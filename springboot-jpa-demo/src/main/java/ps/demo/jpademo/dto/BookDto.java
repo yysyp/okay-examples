@@ -39,7 +39,8 @@ public class BookDto {
                 ", author='" + author + '\'' +
                 ", price=" + price +
                 ", publishDate=" + publishDate +
-                '}';
+                '}' +
+                "\n";
     }
 
 }

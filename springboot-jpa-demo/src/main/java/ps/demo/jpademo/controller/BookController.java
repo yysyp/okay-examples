@@ -1,5 +1,6 @@
 package ps.demo.jpademo.controller;
 
+import com.google.common.net.HttpHeaders;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ps.demo.jpademo.dto.BookDto;
@@ -19,6 +22,8 @@ import ps.demo.jpademo.service.BookService;
 import io.micrometer.core.instrument.Counter;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +133,28 @@ public class BookController {
     void deleteBookDto(@PathVariable Long id) {
         log.info("Delete book by id:{}", id);
         bookService.deleteById(id);
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Void> download(@RequestParam(defaultValue = "10") int pageSize, OutputStream responseStream) throws IOException {
+        int page = 0;
+        boolean hasMoreData = true;
+        while (hasMoreData) {
+            List<BookDto> list = bookService.findAllByPage(page, pageSize);
+            if (list.isEmpty()) {
+                hasMoreData = false;
+            } else {
+                  for (BookDto bookDto : list) {
+                      responseStream.write(bookDto.toString().getBytes());
+                  }
+                  responseStream.flush();
+                  page++;
+            }
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=bookData.txt")
+                .contentType(MediaType.TEXT_PLAIN)
+                .build();
     }
 
 }

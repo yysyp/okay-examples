@@ -32,6 +32,12 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+
   h2:
     console:
       path: /h2-console
@@ -39,6 +45,9 @@ spring:
       settings:
         web-allow-others: true
       trace: true
+  sql:
+    init:
+      mode: embedded
 
 springdoc:
   api-docs:

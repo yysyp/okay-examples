@@ -26,9 +26,10 @@ public class GeekEmployeeController {
 
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> streamingDownloadFile() {
-        File file = new File("README.md");
+        File file = new File("C:\\Users\\yysyp\\Downloads\\chromium-win64.zip");
         StreamingResponseBody streamingResponseBody = outputStream -> {
 
+            
             try (InputStream inputStream = new FileInputStream(file)) {
                 byte[] buf = new byte[8192];
                 int byteRead;
@@ -39,34 +40,14 @@ public class GeekEmployeeController {
 
         };
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=file.data")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=file.zip")
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(file.length()) //optional
                 .body(streamingResponseBody);
 
     }
 
-    @GetMapping("/download2")
-    public ResponseEntity<Void> download2(@RequestParam int pageSize, OutputStream responseStream) throws IOException {
-        int page = 0;
-        boolean hasMoreData = true;
-        while (hasMoreData) {
-//            List<Data> list = service.sss
-//            if (data.isEmpty()) {
-//                hasMoreData = false;
-//            } else {
-//                  for (Data data : list) {
-//                      responseStream.write(data.getBytes());
-//                  }
-//                  responseStream.flush();
-//                  page++;
-//            }
-        }
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=data.csv")
-                .contentType(MediaType.TEXT_PLAIN)
-                .build();
-    }
+
 
 
 }
