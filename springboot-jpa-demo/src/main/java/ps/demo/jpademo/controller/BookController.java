@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import ps.demo.jpademo.dto.BookDto;
 import ps.demo.jpademo.error.BookNotFoundException;
 import ps.demo.jpademo.error.BookUnSupportedFieldPatchException;
@@ -26,6 +27,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @RestController
@@ -155,6 +158,38 @@ public class BookController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=bookData.txt")
                 .contentType(MediaType.TEXT_PLAIN)
                 .build();
+    }
+
+    @GetMapping("/downloadzip")
+    public ResponseEntity<StreamingResponseBody> downloadzip(@RequestParam(defaultValue = "10") int pageSize) throws IOException {
+        StreamingResponseBody streamingResponseBody = outputStream -> {
+            try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+                zipOutputStream.putNextEntry(new ZipEntry("data.txt"));
+                int page = 0;
+                boolean hasMoreData = true;
+                while (hasMoreData) {
+                    List<BookDto> list = bookService.findAllByPage(page, pageSize);
+                    if (list.isEmpty()) {
+                        hasMoreData = false;
+                    } else {
+                        for (BookDto bookDto : list) {
+                            zipOutputStream.write(bookDto.toString().getBytes());
+                        }
+                        zipOutputStream.flush();
+                        page++;
+                    }
+                }
+
+            }
+
+
+        };
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachement; filename=bookData.zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(streamingResponseBody)
+                ;
     }
 
 }
