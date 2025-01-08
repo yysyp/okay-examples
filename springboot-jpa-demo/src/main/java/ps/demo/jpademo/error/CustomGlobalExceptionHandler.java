@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,38 +23,49 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
-public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomGlobalExceptionHandler {//extends ResponseEntityExceptionHandler {
 
-    // Let Spring handle the exception, we just override the status code
-    @ExceptionHandler(BookNotFoundException.class)
-    public void springHandleNotFound(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.NOT_FOUND.value());
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
+        log.error("Handle exception, ex={}", ex.getMessage(), ex);
+        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("timestamp", LocalDateTime.now());
+        linkedHashMap.put("message", ex.getMessage());
+        linkedHashMap.put("status", HttpStatus.BAD_REQUEST.value());
+
+        return new ResponseEntity<>(linkedHashMap, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(BookUnSupportedFieldPatchException.class)
-    public void springUnSupportedFieldPatch(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.METHOD_NOT_ALLOWED.value());
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        Map<String, Object> objectBody = new LinkedHashMap<>();
-        objectBody.put("Current Timestamp", new Date());
-        objectBody.put("Status", status.value());
-
-        // Get all errors
-        List<String> exceptionalErrors
-                = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList());
-
-        objectBody.put("Errors", exceptionalErrors);
-
-        return new ResponseEntity<>(objectBody, status);
-        //return super.handleMethodArgumentNotValid(ex, headers, status, request);
-    }
+//    // Let Spring handle the exception, we just override the status code
+//    @ExceptionHandler(BookNotFoundException.class)
+//    public void springHandleNotFound(HttpServletResponse response) throws IOException {
+//        response.sendError(HttpStatus.NOT_FOUND.value());
+//    }
+//
+//    @ExceptionHandler(BookUnSupportedFieldPatchException.class)
+//    public void springUnSupportedFieldPatch(HttpServletResponse response) throws IOException {
+//        response.sendError(HttpStatus.METHOD_NOT_ALLOWED.value());
+//    }
+//
+//    @Override
+//    protected ResponseEntity<Object> handleException(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+//        Map<String, Object> objectBody = new LinkedHashMap<>();
+//        objectBody.put("timestamp", new Date());
+//        objectBody.put("status", status.value());
+//        objectBody.put("message", ex.getMessage());
+//        // Get all errors
+//        List<String> exceptionalErrors
+//                = ex.getBindingResult()
+//                .getFieldErrors()
+//                .stream()
+//                .map(x -> x.getDefaultMessage())
+//                .collect(Collectors.toList());
+//
+//        objectBody.put("trace", exceptionalErrors);
+//
+//        return new ResponseEntity<>(objectBody, status);
+//        //return super.handleMethodArgumentNotValid(ex, headers, status, request);
+//    }
 
 
 }

@@ -1,6 +1,8 @@
 package ps.demo.upload.service;
 
 import jakarta.transaction.Transactional;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ps.demo.upload.config.UploadConstants;
@@ -11,9 +13,7 @@ import ps.demo.upload.entity.FileRecord;
 import ps.demo.upload.repository.ChunkRepository;
 import ps.demo.upload.repository.FileRepository;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -79,6 +79,7 @@ public class FileService {
         Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5(fileId, chunkMd5);
 
         Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileRecord.getPath() + "/" + UploadConstants.PART + chunkIndex);
+        FileUtils.createParentDirectories(chunkPath.toFile());
         ChunkRecord chunkRecord = null;
         if (chunkRecordOptional.isPresent()) {
             chunkRecord = chunkRecordOptional.get();
@@ -99,11 +100,20 @@ public class FileService {
         try (InputStream in = file.getInputStream()) {
             Files.copy(in, chunkPath);
         }
+        if (!chunkMd5.equals(genMd5(chunkPath.toFile()))) {
+            Files.deleteIfExists(chunkPath);
+            throw new RuntimeException("File fileId:"+fileId+" chunk index:"+chunkIndex+" mismatch!");
+        }
         chunkRecord.setStatus(UploadConstants.UPLOADED);
         chunkRepository.save(chunkRecord);
     }
 
 
+    private String genMd5(File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            return DigestUtils.md5Hex(fis);
+        }
+    }
 
 /** -------------------- Old no use methods -------------------- **/
     public void storeChunk(MultipartFile file, String fileName, long chunkIndex, long totalChunks) throws IOException {

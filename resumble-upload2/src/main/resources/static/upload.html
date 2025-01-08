@@ -3,14 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <title>File Upload HTML</title>
+    <script src="./spark-md5.3.0.2.min.js"></script>
 </head>
 <body>
 <h1>File Upload HTML</h1>
 <form id="uploadForm">
-    <input type="file" id="fileInput" name="file" required><br/>
+    <input type="file" id="fileInput" name="file" multiple required><br/><br/>
     <button type="submit">Upload</button>
 </form>
 <script>
+
+    function streamingMd5(file) {
+        return new Promise((resolve, reject) => {
+            let fileReader = new FileReader();
+            const spark = new SparkMD5.ArrayBuffer();
+            const chunkSize = 1024 * 1024 * 1;
+            const chunks = Math.ceil(file.size / chunkSize);
+            let curChunk = 0;
+            fileReader.onload = event => {
+                spark.append(event.target.result);
+                curChunk++;
+                curChunk < chunks ? loadNext() : resolve(spark.end());
+            };
+
+            fileReader.onerror = () => reject(fileReader.error);
+
+            const loadNext = () => {
+                const start = curChunk * chunkSize;
+                const end = Math.min(start + chunkSize, file.size);
+                const chunk = file.slice(start, end);
+                fileReader.readAsArrayBuffer(chunk);
+            };
+
+            loadNext();
+        });
+
+    }
+
+    document.getElementById("uploadForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const fileInput = document.getElementById("fileInput");
+        const files = fileInput.files;
+
+        for (const file of files) {
+            console.log(`Processing file ${file.name}, file.size: ${file.size}, file.lastModified: ${file.lastModified}, file.type: ${file.type}}`);
+            const md5 = await streamingMd5(file).then((x) => {return x;});
+            console.log(`File [${file.name}] md5: ${md5}`);
+
+            const chunkSize = 1024 * 1024 * 1;
+            const chunks = Math.ceil(file.size / chunkSize);
+
+            const fileCheckResult = await fileMd5ExistCheck(file, md5, chunks, '');
+            if (fileCheckResult.exist) {
+                console.log(`File [${file.name}] md5: ${md5} exist, so skip`);
+                continue;
+            }
+
+            const totalChunks = Math.ceil(file.size / chunkSize);
+            const maxRetries = 3;
+            for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+                const start = chunkIndex * chunkSize;
+                const end = Math.min(start + chunkSize, file.size);
+                const chunk = file.slice(start, end);
+                const chunkMd5 = await streamingMd5(chunk).then((x) => {return x;});
+
+                let chunkCheckResult = await chunkMd5ExistCheck(fileCheckResult.fileId, chunkMd5, chunkIndex);
+                if (chunkCheckResult.exist) {
+                    console.log(`File [${file.name}] chunkIndex: ${chunkIndex} chunkMd5: ${chunkMd5} exist, so skip`);
+                    continue;
+                }
+
+                const formData = new FormData();
+                formData.append("file", chunk);
+                formData.append("fileId", fileCheckResult.fileId);
+                formData.append("chunkMd5", chunkMd5);
+                formData.append("chunkIndex", chunkIndex);
+
+
+                let attempt = 0;
+                let success = false;
+                while (attempt < maxRetries && !success) {
+                    try {
+
+                        const response = await fetch("/files/upload-chunk", {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (response.ok) {
+                            const result = await response.text();
+                            console.log(result);
+                            success = true;
+                        } else {
+                            throw new Error("Failed to upload file: " + file.name + " chunkIndex: " + chunkIndex);
+                        }
+
+                    } catch (error) {
+                        attempt++;
+                        console.error(`File [${file.name}] chunk chunkIndex: ${chunkIndex} upload failed attempt = ${attempt}`, error);
+                        if (attempt >= maxRetries) {
+                            log(`File [${file.name}] chunk chunkIndex: ${chunkIndex} upload failed`);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    async function fileMd5ExistCheck(file, fileMd5, totalChunks, description) {
+
+        const data = {
+            "fileMd5": fileMd5,
+            "fileSize": file.size,
+            "lastModifiedTime": file.lastModified,
+            "fileType": file.type,
+            "totalChunks": totalChunks,
+            "description": description
+        };
+        const response = await fetch("/files/file-md5-check-create", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            throw new Error("Failed to check file md5!");
+        }
+
+    };
+
+
+    async function chunkMd5ExistCheck(fileId, chunkMd5, chunkIndex) {
+
+        const data = {
+            "fileId": fileId,
+            "chunkMd5": chunkMd5,
+            "chunkIndex": chunkIndex
+        };
+        const response = await fetch("/files/chunk-md5-check-create", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            throw new Error("Failed to check file md5!");
+        }
+
+    };
+
+
+
+
+
+
+
+
+/** *************************************************************************************************
     document.getElementById("uploadForm").addEventListener("submit", async (event) => {
         event.preventDefault();
         const fileInput = document.getElementById("fileInput");
@@ -62,6 +220,7 @@
 
         alert("File upload successfully");
     });
+**/
 </script>
 
 </body>
