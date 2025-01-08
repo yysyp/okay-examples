@@ -56,6 +56,15 @@ public class FileController {
         return new ChunkReqResultDto(fileId, chunkMd5, chunkIndex, true);
     }
 
+    @GetMapping("/upload-success")
+    public FileResultDto uploadSuccess(@RequestParam("fileId") Long fileId)
+            throws NoSuchAlgorithmException, IOException {
+        FileResultDto fileResultDto = new FileResultDto();
+        fileResultDto.setFileId(fileId);
+        fileResultDto.setExist(fileService.isFileUploaded(fileId));
+        return fileResultDto;
+    }
+
 
 //    @PostMapping(value = "/upload-chunk", consumes = "multipart/form-data")
 //    public ResponseEntity<String> uploadChunk(@RequestParam("file") MultipartFile file,

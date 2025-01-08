@@ -63,6 +63,8 @@ public class FileService {
                 fileRecord.setPath(fileRecordOptional.get().getPath());
                 this.fileRepository.save(fileRecord);
                 return new FileResultDto(fileRecord.getId(), true);
+            } else {
+                fileRecord.setId(fileRecordOptional.get().getId());
             }
         }
         fileRecord.setPath(UUID.randomUUID().toString());
@@ -73,14 +75,14 @@ public class FileService {
 
     @Transactional
     public boolean chunkMd5CheckAndCopy(Long fileId, String chunkMd5, Long chunkIndex) {
-        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5AndStatus(fileId, chunkMd5, UploadConstants.UPLOADED);
+        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5AndChunkIndexAndStatus(fileId, chunkMd5, chunkIndex, UploadConstants.UPLOADED);
         if (chunkRecordOptional.isPresent()) {
-            ChunkRecord chunkRecord = ChunkRecord.builder()
-                    .fileId(fileId)
-                    .chunkMd5(chunkMd5)
-                    .chunkIndex(chunkIndex)
-                    .build();
-            chunkRepository.save(chunkRecord);
+//            ChunkRecord chunkRecord = ChunkRecord.builder()
+//                    .fileId(fileId)
+//                    .chunkMd5(chunkMd5)
+//                    .chunkIndex(chunkIndex)
+//                    .build();
+//            chunkRepository.save(chunkRecord);
             return true;
         }
         return false;
