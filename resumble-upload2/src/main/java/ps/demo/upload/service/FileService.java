@@ -1,9 +1,16 @@
 package ps.demo.upload.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ps.demo.upload.config.UploadConstants;
+import ps.demo.upload.dto.FileChunkRecordDto;
+import ps.demo.upload.dto.FileResultDto;
+import ps.demo.upload.entity.ChunkRecord;
+import ps.demo.upload.entity.FileRecord;
+import ps.demo.upload.repository.ChunkRepository;
+import ps.demo.upload.repository.FileRepository;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -13,21 +20,94 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class FileService {
 
     public static final Path FILE_STORAGE_LOCATION = Paths.get("upload-folder").toAbsolutePath().normalize();
-    public static final String PART = ".part";
     private final Set<Long> receivedChunks = new HashSet<>();
 
-    public FileService() throws IOException {
+    private final FileRepository fileRepository;
+    private final ChunkRepository chunkRepository;
+
+    public FileService(FileRepository fileRepository, ChunkRepository chunkRepository) throws IOException {
+        this.fileRepository = fileRepository;
+        this.chunkRepository = chunkRepository;
         Files.createDirectories(FILE_STORAGE_LOCATION);
     }
 
+
+    @Transactional
+    public FileResultDto fileMd5SizeModTimeTypeComparingAndCopyCreate(FileChunkRecordDto fcrDto) {
+        Optional<FileRecord> fileRecordOptional = fileRepository.findByFileMd5AndFileSizeAndLastModifyTimeAndFileType(
+                fcrDto.getFileMd5(), fcrDto.getFileSize(), fcrDto.getLastModifyTime(), fcrDto.getFileType());
+        FileRecord fileRecord = FileRecord.fromDto(fcrDto);
+        if (fileRecordOptional.isPresent()) {
+            fileRecord.setPath(fileRecordOptional.get().getPath());
+            this.fileRepository.save(fileRecord);
+
+            return new FileResultDto(fileRecord.getId(), true);
+        }
+        fileRecord.setPath(UUID.randomUUID().toString());
+        FileRecord result = this.fileRepository.save(fileRecord);
+
+        return new FileResultDto(result.getId(), false);
+    }
+
+    @Transactional
+    public boolean chunkMd5CheckAndCopy(Long fileId, String chunkMd5, Long chunkIndex) {
+        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5AndStatus(fileId, chunkMd5, UploadConstants.UPLOADED);
+        if (chunkRecordOptional.isPresent()) {
+            ChunkRecord chunkRecord = ChunkRecord.builder()
+                    .fileId(fileId)
+                    .chunkMd5(chunkMd5)
+                    .chunkIndex(chunkIndex)
+                    .build();
+            chunkRepository.save(chunkRecord);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Transactional
+    public void uploadChunk(Long fileId, String chunkMd5, Long chunkIndex, MultipartFile file) throws IOException {
+        FileRecord fileRecord = fileRepository.findById(fileId).get();
+        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5(fileId, chunkMd5);
+
+        Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileRecord.getPath() + "/" + UploadConstants.PART + chunkIndex);
+        ChunkRecord chunkRecord = null;
+        if (chunkRecordOptional.isPresent()) {
+            chunkRecord = chunkRecordOptional.get();
+            if (UploadConstants.UPLOADED.equals(chunkRecordOptional.get().getStatus())) {
+                return;
+            }
+            Files.deleteIfExists(chunkPath);
+        } else {
+            chunkRecord = ChunkRecord.builder()
+                    .fileId(fileId)
+                    .chunkMd5(chunkMd5)
+                    .chunkIndex(chunkIndex)
+                    .status(UploadConstants.UPLOADING)
+                    .build();
+            chunkRepository.save(chunkRecord);
+        }
+
+        try (InputStream in = file.getInputStream()) {
+            Files.copy(in, chunkPath);
+        }
+        chunkRecord.setStatus(UploadConstants.UPLOADED);
+        chunkRepository.save(chunkRecord);
+    }
+
+
+
+/** -------------------- Old no use methods -------------------- **/
     public void storeChunk(MultipartFile file, String fileName, long chunkIndex, long totalChunks) throws IOException {
-        Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileName + PART +chunkIndex);
+        Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileName + UploadConstants.PART +chunkIndex);
         try (InputStream in = file.getInputStream()) {
             Files.copy(in, chunkPath);
         }
@@ -44,7 +124,7 @@ public class FileService {
         Path filePath = FILE_STORAGE_LOCATION.resolve(fileName);
         try (RandomAccessFile accessFile = new RandomAccessFile(filePath.toFile(), "rw")) {
             for (long i = 0; i < totalChunks; i++) {
-                Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileName + PART + i);
+                Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileName + UploadConstants.PART + i);
                 byte[] chunkData = Files.readAllBytes(chunkPath);
                 accessFile.write(chunkData);
                 Files.delete(chunkPath);
