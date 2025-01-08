@@ -19,10 +19,7 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class FileService {
@@ -40,16 +37,33 @@ public class FileService {
     }
 
 
+
+    public boolean isFileUploaded(Long fileId) {
+        Optional<FileRecord> fileRecordOptional = fileRepository.findById(fileId);
+        if (!fileRecordOptional.isPresent()) {
+            return false;
+        }
+        FileRecord fileRecord = fileRecordOptional.get();
+        List<ChunkRecord> chunkRecordList = this.chunkRepository.findByFileId(fileRecord.getId());
+        if (fileRecord.getTotalChunks() != chunkRecordList.size()) {
+            return false;
+        }
+        return !chunkRecordList.stream().anyMatch(ck -> UploadConstants.UPLOADING.equals(ck.getStatus()));
+
+    }
+
+
     @Transactional
     public FileResultDto fileMd5SizeModTimeTypeComparingAndCopyCreate(FileChunkRecordDto fcrDto) {
-        Optional<FileRecord> fileRecordOptional = fileRepository.findByFileMd5AndFileSizeAndLastModifyTimeAndFileType(
+        Optional<FileRecord> fileRecordOptional = fileRepository.findFirstByFileMd5AndFileSizeAndLastModifyTimeAndFileType(
                 fcrDto.getFileMd5(), fcrDto.getFileSize(), fcrDto.getLastModifyTime(), fcrDto.getFileType());
         FileRecord fileRecord = FileRecord.fromDto(fcrDto);
         if (fileRecordOptional.isPresent()) {
-            fileRecord.setPath(fileRecordOptional.get().getPath());
-            this.fileRepository.save(fileRecord);
-
-            return new FileResultDto(fileRecord.getId(), true);
+            if (isFileUploaded(fileRecordOptional.get().getId())) {
+                fileRecord.setPath(fileRecordOptional.get().getPath());
+                this.fileRepository.save(fileRecord);
+                return new FileResultDto(fileRecord.getId(), true);
+            }
         }
         fileRecord.setPath(UUID.randomUUID().toString());
         FileRecord result = this.fileRepository.save(fileRecord);

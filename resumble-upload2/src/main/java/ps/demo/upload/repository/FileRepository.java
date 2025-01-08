@@ -12,7 +12,7 @@ import java.util.Optional;
 // Spring Data JPA creates CRUD implementation at runtime automatically.
 public interface FileRepository extends JpaRepository<FileRecord, Long> {
 
-    Optional<FileRecord> findByFileMd5AndFileSizeAndLastModifyTimeAndFileType(String fileMd5, long fileSize, long lastModifyTime, String fileType);
+    Optional<FileRecord> findFirstByFileMd5AndFileSizeAndLastModifyTimeAndFileType(String fileMd5, long fileSize, long lastModifyTime, String fileType);
 
 
 }
