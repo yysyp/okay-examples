@@ -1,5 +1,6 @@
 package ps.demo.jpademo;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -27,6 +28,7 @@ import java.util.Random;
 
 @Slf4j
 @SpringBootApplication
+@EnableEncryptableProperties
 public class MainApplication {
 
     public static void main(String[] args) {
