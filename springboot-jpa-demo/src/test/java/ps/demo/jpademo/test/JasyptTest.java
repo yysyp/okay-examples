@@ -1,6 +1,7 @@
 package ps.demo.jpademo.test;
 
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 
 import java.util.Scanner;
@@ -8,22 +9,19 @@ import java.util.Scanner;
 public class JasyptTest {
 
     public static void main(String[] args) {
-        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-        SimpleStringPBEConfig config = new SimpleStringPBEConfig();
-        Scanner in = new Scanner(System.in);
-        String JasyptPass = in.nextLine();
-        in.close();
-        System.out.println("Your input JasyptPass=["+JasyptPass+"]");
-        config.setPassword(JasyptPass);
-        config.setAlgorithm("PBEWithMD5AndDES");
-        config.setProviderName("SunJCE");
-        config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
-        config.setKeyObtentionIterations("1000");
-        config.setPoolSize("1");
-        config.setStringOutputType("base64");
-        encryptor.setConfig(config);
+        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
 
-        String encrypted = encryptor.encrypt("Hello world, this is app pass");
+        System.out.print("Input your Jasypt pass:");
+        Scanner in = new Scanner(System.in);
+        String jasyptPass = in.nextLine();
+        in.close();
+        System.out.println("Your input JasyptPass=["+jasyptPass+"]");
+
+        encryptor.setPassword(jasyptPass);
+        encryptor.setAlgorithm("PBEWithMD5AndDES");
+        encryptor.setIvGenerator(new org.jasypt.iv.NoIvGenerator());
+
+        String encrypted = encryptor.encrypt("Hello world ---== !");
         System.out.println("==>>ENC(" + encrypted + ")");
     }
 

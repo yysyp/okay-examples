@@ -65,6 +65,15 @@ management:
     web:
       exposure:
         include: info, health, prometheus, schema
+
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    password: ${JASYPT_PASS}
+encpwdtest:
+  test1: ENC(C75Umw2KTwzbigkYpl6t4dSxX6H+2jlL)
+
 ---
 
 spring:

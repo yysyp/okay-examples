@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import ps.demo.jpademo.entity.Book;
 import ps.demo.jpademo.entity.Role;
 import ps.demo.jpademo.repository.BookRepository;
@@ -32,6 +33,7 @@ import java.util.Random;
 public class MainApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(MainApplication.class, args);
     }
 
@@ -40,6 +42,12 @@ public class MainApplication {
     @Bean
     public CommandLineRunner demo(ApplicationContext ctx, BookRepository bookRepository, RoleRepository roleRepository, RoleService roleService) {
         return (args) -> {
+
+//            Environment environment = ctx.getBean(Environment.class);
+//            String value = environment.getProperty("encpwdtest.test1");
+//            System.out.println("---value ===>>" + value);
+//            value = environment.getProperty("testvar");
+//            System.out.println("---value ===>>" + value);
 
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);
