@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ChunkReqResultDto {
 
-    private Long fileId;
+    private Long fileRecordId;
     private String chunkMd5;
     private Long chunkIndex;
     private Boolean exist;

@@ -17,8 +17,6 @@ public class ChunkRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long fileId;
-
     private String chunkMd5;
 
     private long chunkIndex;

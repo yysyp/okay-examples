@@ -36,7 +36,7 @@ public class FileController {
     public ChunkReqResultDto chunkMd5CheckCreate(@RequestBody ChunkReqResultDto chunkReqResultDto)
             throws IOException {
 
-        boolean exist = fileService.chunkMd5CheckAndCopy(chunkReqResultDto.getFileId(), chunkReqResultDto.getChunkMd5(), chunkReqResultDto.getChunkIndex());
+        boolean exist = fileService.chunkMd5CheckAndCopy(chunkReqResultDto.getFileRecordId(), chunkReqResultDto.getChunkMd5(), chunkReqResultDto.getChunkIndex());
 
         chunkReqResultDto.setExist(exist);
         return chunkReqResultDto;
@@ -44,24 +44,24 @@ public class FileController {
 
     @PostMapping(value = "/upload-chunk", consumes = "multipart/form-data")
     public ChunkReqResultDto uploadChunk(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("fileId") Long fileId,
+                                              @RequestParam("fileRecordId") Long fileRecordId,
                                               @RequestParam("chunkMd5") String chunkMd5,
                                               @RequestParam("chunkIndex") Long chunkIndex
                                               ) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File chunk is empty");
         }
-        fileService.uploadChunk(fileId, chunkMd5, chunkIndex, file);
+        fileService.uploadChunk(fileRecordId, chunkMd5, chunkIndex, file);
 
-        return new ChunkReqResultDto(fileId, chunkMd5, chunkIndex, true);
+        return new ChunkReqResultDto(fileRecordId, chunkMd5, chunkIndex, true);
     }
 
     @GetMapping("/upload-success")
-    public FileResultDto uploadSuccess(@RequestParam("fileId") Long fileId)
+    public FileResultDto uploadSuccess(@RequestParam("fileRecordId") Long fileRecordId)
             throws NoSuchAlgorithmException, IOException {
         FileResultDto fileResultDto = new FileResultDto();
-        fileResultDto.setFileId(fileId);
-        fileResultDto.setExist(fileService.isFileUploaded(fileId));
+        fileResultDto.setFileRecordId(fileRecordId);
+        fileResultDto.setExist(fileService.isFileUploaded(fileRecordId));
         return fileResultDto;
     }
 

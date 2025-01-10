@@ -7,7 +7,7 @@ import lombok.*;
 @Data
 public class FileResultDto {
 
-    private Long fileId;
+    private Long fileRecordId;
     private Boolean exist;
 
 

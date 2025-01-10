@@ -23,7 +23,7 @@ public class FileRecord {
 
     private String fileMd5;
     private long fileSize;
-    private long lastModifyTime;
+    private long lastModifiedTime;
     private String fileType;
 
     private String path;
@@ -61,7 +61,7 @@ public class FileRecord {
         FileRecord fr = new FileRecord();
         fr.fileMd5 = fileChunkRecordDto.getFileMd5();
         fr.fileSize = fileChunkRecordDto.getFileSize();
-        fr.lastModifyTime = fileChunkRecordDto.getLastModifyTime();
+        fr.lastModifiedTime = fileChunkRecordDto.getLastModifiedTime();
         fr.fileType = fileChunkRecordDto.getFileType();
         fr.totalChunks = fileChunkRecordDto.getTotalChunks();
         fr.fileName = fileChunkRecordDto.getFileName();

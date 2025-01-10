@@ -38,13 +38,13 @@ public class FileService {
 
 
 
-    public boolean isFileUploaded(Long fileId) {
-        Optional<FileRecord> fileRecordOptional = fileRepository.findById(fileId);
+    public boolean isFileUploaded(Long fileRecordId) {
+        Optional<FileRecord> fileRecordOptional = fileRepository.findById(fileRecordId);
         if (!fileRecordOptional.isPresent()) {
             return false;
         }
         FileRecord fileRecord = fileRecordOptional.get();
-        List<ChunkRecord> chunkRecordList = this.chunkRepository.findByFileId(fileRecord.getId());
+        List<ChunkRecord> chunkRecordList = this.chunkRepository.findByFileRecordId(fileRecord.getId());
         if (fileRecord.getTotalChunks() != chunkRecordList.size()) {
             return false;
         }
@@ -55,30 +55,33 @@ public class FileService {
 
     @Transactional
     public FileResultDto fileMd5SizeModTimeTypeComparingAndCopyCreate(FileChunkRecordDto fcrDto) {
-        Optional<FileRecord> fileRecordOptional = fileRepository.findFirstByFileMd5AndFileSizeAndLastModifyTimeAndFileType(
-                fcrDto.getFileMd5(), fcrDto.getFileSize(), fcrDto.getLastModifyTime(), fcrDto.getFileType());
+        Optional<FileRecord> fileRecordOptional = fileRepository.findFirstByFileMd5AndFileSizeAndLastModifiedTimeAndFileType(
+                fcrDto.getFileMd5(), fcrDto.getFileSize(), fcrDto.getLastModifiedTime(), fcrDto.getFileType());
         FileRecord fileRecord = FileRecord.fromDto(fcrDto);
         if (fileRecordOptional.isPresent()) {
-            if (isFileUploaded(fileRecordOptional.get().getId())) {
-                fileRecord.setPath(fileRecordOptional.get().getPath());
+            FileRecord fileRecordOld = fileRecordOptional.get();
+            if (isFileUploaded(fileRecordOld.getId())) {
+                fileRecord.setPath(fileRecordOld.getPath());
                 this.fileRepository.save(fileRecord);
                 return new FileResultDto(fileRecord.getId(), true);
             } else {
-                fileRecord.setId(fileRecordOptional.get().getId());
+                fileRecord.setId(fileRecordOld.getId());
+                fileRecord.setPath(fileRecordOld.getPath());
             }
+        } else {
+            fileRecord.setPath(UUID.randomUUID().toString());
         }
-        fileRecord.setPath(UUID.randomUUID().toString());
         FileRecord result = this.fileRepository.save(fileRecord);
 
         return new FileResultDto(result.getId(), false);
     }
 
     @Transactional
-    public boolean chunkMd5CheckAndCopy(Long fileId, String chunkMd5, Long chunkIndex) {
-        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5AndChunkIndexAndStatus(fileId, chunkMd5, chunkIndex, UploadConstants.UPLOADED);
+    public boolean chunkMd5CheckAndCopy(Long fileRecordId, String chunkMd5, Long chunkIndex) {
+        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileRecordIdAndChunkMd5AndChunkIndexAndStatus(fileRecordId, chunkMd5, chunkIndex, UploadConstants.UPLOADED);
         if (chunkRecordOptional.isPresent()) {
 //            ChunkRecord chunkRecord = ChunkRecord.builder()
-//                    .fileId(fileId)
+//                    .fileRecordId(fileRecordId)
 //                    .chunkMd5(chunkMd5)
 //                    .chunkIndex(chunkIndex)
 //                    .build();
@@ -90,9 +93,9 @@ public class FileService {
 
 
     @Transactional
-    public void uploadChunk(Long fileId, String chunkMd5, Long chunkIndex, MultipartFile file) throws IOException {
-        FileRecord fileRecord = fileRepository.findById(fileId).get();
-        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileIdAndChunkMd5(fileId, chunkMd5);
+    public void uploadChunk(Long fileRecordId, String chunkMd5, Long chunkIndex, MultipartFile file) throws IOException {
+        FileRecord fileRecord = fileRepository.findById(fileRecordId).get();
+        Optional<ChunkRecord> chunkRecordOptional = chunkRepository.findByFileRecordIdAndChunkMd5(fileRecordId, chunkMd5);
 
         Path chunkPath = FILE_STORAGE_LOCATION.resolve(fileRecord.getPath() + "/" + UploadConstants.PART + chunkIndex);
         FileUtils.createParentDirectories(chunkPath.toFile());
@@ -105,7 +108,7 @@ public class FileService {
             Files.deleteIfExists(chunkPath);
         } else {
             chunkRecord = ChunkRecord.builder()
-                    .fileId(fileId)
+                    .fileRecord(fileRecord)
                     .chunkMd5(chunkMd5)
                     .chunkIndex(chunkIndex)
                     .status(UploadConstants.UPLOADING)
@@ -118,7 +121,7 @@ public class FileService {
         }
         if (!chunkMd5.equals(genMd5(chunkPath.toFile()))) {
             Files.deleteIfExists(chunkPath);
-            throw new RuntimeException("File fileId:"+fileId+" chunk index:"+chunkIndex+" mismatch!");
+            throw new RuntimeException("File fileRecordId:"+fileRecordId+" chunk index:"+chunkIndex+" mismatch!");
         }
         chunkRecord.setStatus(UploadConstants.UPLOADED);
         chunkRepository.save(chunkRecord);
@@ -130,6 +133,7 @@ public class FileService {
             return DigestUtils.md5Hex(fis);
         }
     }
+
 
 /** -------------------- Old no use methods -------------------- **/
     public void storeChunk(MultipartFile file, String fileName, long chunkIndex, long totalChunks) throws IOException {

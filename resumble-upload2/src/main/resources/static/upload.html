@@ -53,6 +53,7 @@
 </div>
 <h1>Resumable File Chunked Upload</h1>
 <form id="uploadForm">
+    <label for="fileInput"> Choose Files:</label>
     <input type="file" id="fileInput" name="file" multiple required><br/><br/>
     <button type="submit">Upload/Retry</button>
 </form>
@@ -115,7 +116,7 @@
                     const chunk = file.slice(start, end);
                     const chunkMd5 = await streamingMd5(chunk).then((x) => {return x;});
 
-                    let chunkCheckResult = await chunkMd5ExistCheck(fileCheckResult.fileId, chunkMd5, chunkIndex);
+                    let chunkCheckResult = await chunkMd5ExistCheck(fileCheckResult.fileRecordId, chunkMd5, chunkIndex);
                     if (chunkCheckResult.exist) {
                         console.log(`File [${file.name}] chunkIndex: ${chunkIndex} chunkMd5: ${chunkMd5} exist, so skip`);
                         continue;
@@ -123,7 +124,7 @@
 
                     const formData = new FormData();
                     formData.append("file", chunk);
-                    formData.append("fileId", fileCheckResult.fileId);
+                    formData.append("fileRecordId", fileCheckResult.fileRecordId);
                     formData.append("chunkMd5", chunkMd5);
                     formData.append("chunkIndex", chunkIndex);
 
@@ -177,6 +178,7 @@
             "lastModifiedTime": file.lastModified,
             "fileType": file.type,
             "totalChunks": totalChunks,
+            "fileName": file.name,
             "description": description
         };
         const response = await fetch("/files/file-md5-check-create", {
@@ -196,10 +198,10 @@
     };
 
 
-    async function chunkMd5ExistCheck(fileId, chunkMd5, chunkIndex) {
+    async function chunkMd5ExistCheck(fileRecordId, chunkMd5, chunkIndex) {
 
         const data = {
-            "fileId": fileId,
+            "fileRecordId": fileRecordId,
             "chunkMd5": chunkMd5,
             "chunkIndex": chunkIndex
         };
