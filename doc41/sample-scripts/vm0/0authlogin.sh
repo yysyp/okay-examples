@@ -15,9 +15,13 @@ last_datetime=$(date -d "$last_datetime_str" +%s)
 current_datetime=$(date -d "$current_datetime_str" +%s)
 if (( $current_datetime - $last_datetime < 86400 )); then
   echo "Auth within 1 day."
+  gcloud config set account $ACCOUNT_ID
+  gcloud config set project $PROJECT_ID
 else
   echo "To login"
-  gcloud config set project $PROJECT_ID
+  gcloud config set account $ACCOUNT_ID
   gcloud auth login
+  gcloud config set project $PROJECT_ID
   echo "$current_datetime_str" > ./authLogin.output
 fi
+gcloud config set auth/impersonate_service_account xxxx
