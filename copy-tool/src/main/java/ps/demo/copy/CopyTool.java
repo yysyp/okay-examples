@@ -51,7 +51,7 @@ public class CopyTool {
         Map<String, String> replacementMap = Map.of(templateProjectName, newProjectName,
                 templatePackageName, newPackageName,
                 templatePackageName.replace(".", "\\"), newPackageName.replace(".", "\\"),
-                "0001", 2 + new Random().nextInt(9999 - 2) + "");
+                "0001", 1000 + new Random().nextInt(9999 - 1000) + "");
 
 
         if (!Files.exists(targetPath)) {

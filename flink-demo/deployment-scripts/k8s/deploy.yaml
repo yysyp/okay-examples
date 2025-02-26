@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nsapp
+  labels:
+    namespace: nsapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-demo
+  namespace: nsapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink-demo
+  template:
+    metadata:
+      labels:
+        app: flink-demo
+    spec:
+      containers:
+        - name: flink-demo
+#          image: "xxx.com/path/repo/flink-demo:20241014-195213"
+          image: "flink-demo:20241014-195213"
+          ports:
+            - containerPort: 172
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 172
+            initialDelaySeconds: 120
+            periodSeconds: 30
+          env:
+            - name: APPID
+              valueFrom:
+                secretKeyRef:
+                  name: flink-demo-key
+                  key: appid
+            - name: APPSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: flink-demo-key
+                  key: appsecret
+          volumeMounts:
+            - name: myvolume
+              mountPath: /app/volume
+              readOnly: true
+      volumes:
+        - name: myvolume
+          secret:
+            secretName: flink-demo-key
+#            items:
+#              - key: key.pem
+#                path: key.pem
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink-demo-service
+  namespace: nsapp
+  labels:
+    app: flink-demo
+spec:
+  ports:
+    - port: 172 # between containers for service call for K8s
+      targetPort: 172 # container port
+      nodePort: 372 # by default >30000 for external call
+  type: NodePort
+  selector:
+    app: flink-demo
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: flink-demo-key
+  namespace: nsapp
+type: Opaque
+data:
+  appid: QVBQMTIzNA==
+  appsecret: UGFzc3dkXzEyMzQ1Ng==
+  key.pem: VGhpcyBpcyB0aGUgZGF0YSBmcm9tIGtleS5wZW0gZmlsZSBmcm9tIHNlY3JldApnb29kIGx1Y2t+Cl9fa3ViZXJuZXRzIHNlY3JldHM=
