@@ -42,7 +42,7 @@ public class FileController {
         log.info("Chunk check chunkReqResultDto:{}", chunkReqResultDto);
         boolean exist = fileService.chunkMd5Check(chunkReqResultDto.getFileRecordId(), chunkReqResultDto.getChunkMd5(), chunkReqResultDto.getChunkIndex());
         chunkReqResultDto.setExist(exist);
-        
+        log.info("Chunk check chunkReqResultDto:{}", chunkReqResultDto);
         return chunkReqResultDto;
     }
 
@@ -52,12 +52,25 @@ public class FileController {
                                               @RequestParam("chunkMd5") String chunkMd5,
                                               @RequestParam("chunkIndex") Long chunkIndex
                                               ) throws IOException {
+        log.info("Upload chunk fileRecordId={}, chunkMd5={}, chunkIndex={}", fileRecordId, chunkMd5, chunkIndex);
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File chunk is empty");
         }
         fileService.uploadChunk(fileRecordId, chunkMd5, chunkIndex, file);
+        ChunkReqResultDto chunkReqResultDto = new ChunkReqResultDto(fileRecordId, chunkMd5, chunkIndex, true);
+        log.info("Upload chunk chunkReqResultDto={}", chunkReqResultDto);
+        return chunkReqResultDto;
+    }
 
-        return new ChunkReqResultDto(fileRecordId, chunkMd5, chunkIndex, true);
+    @PostMapping(value = "/change-upload-status", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public FileResultDto changeUploadStatus(@RequestBody FileResultDto fileResultDto)
+            throws IOException {
+
+        log.info("Update file status fileResultDto:{}", fileResultDto);
+        boolean changeFlag = fileService.changeUploadStatusToUploaded(fileResultDto.getFileRecordId());
+        fileResultDto.setExist(changeFlag);
+        log.info("Update file status fileResultDto:{}", fileResultDto);
+        return fileResultDto;
     }
 
     @GetMapping("/upload-success")
@@ -70,25 +83,5 @@ public class FileController {
     }
 
 
-//    @PostMapping(value = "/upload-chunk", consumes = "multipart/form-data")
-//    public ResponseEntity<String> uploadChunk(@RequestParam("file") MultipartFile file,
-//                                              @RequestParam("fileName") String fileName,
-//                                              @RequestParam("chunkIndex") long chunkIndex,
-//                                              @RequestParam("totalChunks") long totalChunks)
-//            throws IOException {
-//        if (file.isEmpty()) {
-//            return ResponseEntity.badRequest().body("File is empty");
-//        }
-//        fileService.storeChunk(file, fileName, chunkIndex, totalChunks);
-//        return ResponseEntity.ok("Chunk uploaded successfully");
-//    }
-//
-//    @GetMapping("/checksum")
-//    public ResponseEntity<String> getChecksum(@RequestParam("fileName") String fileName)
-//            throws NoSuchAlgorithmException, IOException {
-//        Path filePath = FileService.FILE_STORAGE_LOCATION.resolve(fileName);
-//        String checksum = fileService.calculateChecksum(filePath);
-//        return ResponseEntity.ok(checksum);
-//    }
 
 }

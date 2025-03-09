@@ -9,7 +9,7 @@ import java.util.Optional;
 
 // Spring Data JPA creates CRUD implementation at runtime automatically.
 public interface ChunkRepository extends JpaRepository<ChunkRecord, Long> {
-    Optional<ChunkRecord> findByFileRecordIdAndChunkMd5AndChunkIndex(Long fileRecordId, String chunkMd5);
+    Optional<ChunkRecord> findByFileRecordIdAndChunkMd5AndChunkIndex(Long fileRecordId, String chunkMd5, Long chunkIndex);
 
     Optional<ChunkRecord> findByFileRecordIdAndChunkMd5AndChunkIndexAndStatus(Long fileRecordId, String chunkMd5, long chunkIndex, String status);
 
