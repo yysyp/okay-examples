@@ -1,0 +1,27 @@
+Infra to sync for all ENVs
+Infra as code
+Infra test?
+Unit test to run each build
+Automation test to run hourly on SIT
+Configuration to sync for all ENVs
+Configuration test (ping? etc.)
+Feature backward compatible
+Frequent update dependencies (security scan issues)
+Vunerbility/Static/Container/Dynamic scans
+Health check cover all dependencies
+Feature easy to test (add toggles?)
+Prod test service (test connection etc.)
+Fixing/testing idempotent (can rerun)
+Testing to parallel run
+Testing end to end
+Performance test
+Metrics/Tracking/Monitoring/Alerting
+Single source control
+Version control
+Readme/instruction
+Trunk base development
+Keep it simple
+Decoupling also less technology less component
+Small delivery
+High availability/Concurrency/Performance (稳多快)
+多快好省稳
