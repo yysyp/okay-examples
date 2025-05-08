@@ -1,1 +1,18 @@
-  ID	  Category	"Priority (High/Medium/Low)"	  Item	  Owner	  Status	  ETA	  Remark	  Jira ID
+1) Tracking columns:
+  ID	  Category	"Priority (High:1/Medium:2/Low:3)"	  Item	  Owner	  Status	  ETA	  Remark	  Jira ID
+
+
+2) Way to do:
+a,  Delegate --> JDCallME(Jira/doc/call/msg/email)
+b,  Consulting
+c,  Search
+d,  Doc
+e,  Code
+
+ 
+3) Clear & Accurate:
+  3C (Context/Checkpoint/Contingency)
+  SMART (Specific/Measurable/Achievable/Relevant/Time-bound)
+  AC
+  Scope
+  Due to (Why), (Who) need to do (How much) of (What) at (Where) in (Scope) by (When), otherwise (Consequence), here is (How) and (Resources) for reference. 
