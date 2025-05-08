@@ -1,0 +1,147 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+AppBlock, ScreenZen, one sec
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+1 2 3 5 8 13 21 34
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+ID	  Category	Priority(High:1/Medium:2/Low:3)	Item	Owner	Status	ETA	Remark	JiraID
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+#JDCallME(jira/doc/call/msg/email) - asking/searching/doc/code/Ramp-Up Guides
+#*Is this my responsibility?  *Do I need any approval to do it?  *Any one can help?  *Any other way to do it?
+#SMART(Specific/Measurable/Achievable/Relevant/Time-Bound) | Scope | Money(Budget) | Resource(People) | Time(Schedule)
+#时间(When)、地点(Where)、人物(Who)、事件(What)、起因(Why)、经过(How)、结果(How much)
+#Because of WHY reason, need WHO at WHEN and WHERE, via HOW method to do WHAT thing, 
+complete at HOW MUCH degree, has what RESOURCE to support, want what RESULT, right?
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Due to (Why), (Who) requires (How much) of (What) at (Where) in (Scope) by (When), otherwise (Consequence), here is (How) and (Resources) for reference.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+(Raw business requirement) Business
+(Business requirement analysis) Product Owner/BA
+(Scope & simplify the requirement) PO
+(Techinical design - Break down) Architect
+(Development & UT) Dev
+(Automation test) Dev
+(Code scan issue fix) Dev
+(PR & solve conflicts) Dev
+(Merge code to trunk) Dev
+(Env setup runbook) Dev
+(Data migration) Dev
+(Pipeline deploy to dev) Dev
+(Integration test) Dev/QA
+(Performance test) QA
+(Bug fix) Dev
+
+Frontend/Backend/Configuration/DB
+Effort needs (Beside development, also including UT, AT, PT, Scan Issues, Configs) = (dev a function effort) * 4
+Daily Stand Up meetings etc.(30%)
+Business analysis(20%)
+Design Breakdown(20%)
+Development & UT & AT(50%)
+Deployment Configuration etc.(10%)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Infra to sync for all ENVs
+Infra as code
+Infra test?
+Unit test to run each build
+Automation test to run hourly on SIT
+Configuration to sync for all ENVs
+Configuration test (ping? etc.)
+Feature backward compatible and fade out the obsolated feature in next release
+Frequent update dependencies (security scan issues)
+Vunerbility/Static/Container/Dynamic scans
+Health check cover all dependencies
+Feature easy to test (add toggles?)
+Prod test service (test connection etc.)
+Fixing/testing idempotent (can rerun)
+Testing to parallel run
+Testing end to end
+Performance test
+Metrics/Tracking/Monitoring/Alerting
+Single source control
+Version control
+Readme/instruction
+Trunk base development
+Keep it simple
+Decoupling also less technology less component
+Small delivery
+High availability/Concurrency/Performance (稳多快)
+多快好省稳
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+#!/bin/sh
+sed -i 's/\r//' xx.sh
+ll
+ls -ltr
+ps -ef | grep tomcat
+ps -aux | grep tomcat
+kill -9 {PID}
+df -h
+du -h / --max-depth=1
+sudo lsof | grep delete
+netstat -anlp | grep 443
+netstat -anop | grep {PID}
+tar -zcvf log.tar.gz log2012.log
+tar -zxvf /opt/soft/test/log.tar.gz
+find / -name *xxx*.c
+find . -type f -and -name '*.sh' -exec sed -i 's/\r//' {} \;
+sudo find / -name config.txt | xargs grep 'keyword' 2>/dev/null
+
+[gg]: To the beginning.
+[Shift+g]: To the END.
+   [b]
+   [y]
+    |
+ [Enter]
+ [SPACE]
+Search:
+[?]:Up search
+[/]:Down search
+[Shift+n]: Previous match
+[n]:Next match
+[q]:Quit 
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+流相关资源一般遵循：
+先开输入再开输出，先关输出再关输入。
+开输入->开输出->操作->关输出->关输入
+相关外层再关内层。
+开内层->开外层->操作->关外层->关内层
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+果断表达的要点和步骤：（You, Me, What, OK?）
+1，I understand 我了解你的用意/感受/立场...
+2，I think / I would say 我对这件事情的看法是这样的(表达自己：立场，想法，感受)
+3，I expect (Outcome) 我期望我们可以...(提出下一步行动，建议方案)
+4，What do you think 你觉得如何？(等候对方回应)
+
+分歧分析： 问题导向：
+1，时间的安排认知
+2，目标优先顺序的认知
+3，对技术或方法的判断
+4，标准的认定不一致
+5，管理政策和程序
+6，资源分配造成
+7，职责角色不同
+8，信息不一致或不对称
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+question and answer:
+Honesty is good culture, it creates transparency and increase efficiency, How to create and ensure the honesty culture in our workspace?
+What is the biggest challenge and opportunity for the company?
+How do you see our company changing in the next year, two-years, or five-years?
+What is the one thing you would change about the team?
+What have been the biggest challenges you’ve had to overcome?
